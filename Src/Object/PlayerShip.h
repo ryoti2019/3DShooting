@@ -24,5 +24,6 @@ private:
 	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ
 	Transform transform_;
 
+
 };
 

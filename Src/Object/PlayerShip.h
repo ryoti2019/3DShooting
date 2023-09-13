@@ -24,5 +24,6 @@ private:
 	// モデル制御の基本情報
 	Transform transform_;
 
+	// テスト
 };
 

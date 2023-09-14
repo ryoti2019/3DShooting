@@ -39,7 +39,7 @@ void PlayerShip::Update(void)
 	VECTOR moveDir = { 0.0f,0.0f,1.0f };
 
 	// 押下された移動ボタンの方向に移動
-	VECTOR direction = VNorm(rot_.PosAxis(moveDir)); // 回転させる必要がある
+	VECTOR direction = VNorm(moveDir); // 回転させる必要がある
 
 	// 移動量(方向 * スピード)
 	VECTOR movePow = VScale(direction, SPEED_MOVE);
@@ -59,4 +59,9 @@ void PlayerShip::Draw(void)
 
 void PlayerShip::Release(void)
 {
+}
+
+const Transform& PlayerShip::GetTransform(void) const
+{
+	return transform_;
 }

@@ -1,12 +1,14 @@
 #pragma once
 #include "../Object/Common/Transform.h"
+
 class SpaceDome
+
 {
 
 public:
 
 	// コンストラクタ
-	SpaceDome(void);
+	SpaceDome(const Transform& follow);
 
 	// デストラクタ
 	~SpaceDome(void);
@@ -17,7 +19,10 @@ public:
 	void Release(void);
 
 private:
-	
+
+	// 追従対象
+	const Transform& follow_;
+
 	// モデル制御の基本情報
 	Transform transform_;
 

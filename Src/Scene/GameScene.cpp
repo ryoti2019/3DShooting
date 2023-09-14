@@ -18,17 +18,22 @@ GameScene::~GameScene(void)
 void GameScene::Init(void)
 {
 
-	// カメラモード：フリーカメラ
-	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FREE);
+	//// カメラモード：フリーカメラ
+	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FREE);
 
-	grid_ = new Grid;
+	grid_ = new Grid();
 	grid_->Init();
 
-	spaceDome_ = new SpaceDome;
+	playerShip_ = new PlayerShip();
+	playerShip_->Init();
+
+	spaceDome_ = new SpaceDome(playerShip_->GetTransform());
 	spaceDome_->Init();
 
-	playerShip_ = new PlayerShip;
-	playerShip_->Init();
+	// カメラモード：追従
+	Camera* camera = SceneManager::GetInstance().GetCamera();
+	camera->SetFollow(&playerShip_->GetTransform());
+	camera->ChangeMode(Camera::MODE::FOLLOW);
 
 }
 

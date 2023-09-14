@@ -2,7 +2,7 @@
 #include "../Utility/AsoUtility.h"
 #include "SpaceDome.h"
 
-SpaceDome::SpaceDome(void)
+SpaceDome::SpaceDome(const Transform& follow) : follow_(follow)
 {
 }
 
@@ -32,7 +32,12 @@ void SpaceDome::Init(void)
 
 void SpaceDome::Update(void)
 {
+
+	// í«è]èàóù
+	transform_.pos = follow_.pos;
+
 	transform_.Update();
+
 }
 
 void SpaceDome::Draw(void)

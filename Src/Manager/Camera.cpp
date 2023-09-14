@@ -1,5 +1,6 @@
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
+#include "../Object/Common/Transform.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -37,6 +38,9 @@ void Camera::SetBeforeDraw(void)
 		break;
 	case Camera::MODE::FREE:
 		SetBeforeDrawFree();
+		break;
+	case Camera::MODE::FOLLOW:
+		SetBeforeDrawFollow();
 		break;
 	}
 
@@ -79,7 +83,7 @@ void Camera::SetBeforeDrawFree(void)
 	if (!AsoUtility::EqualsVZero(axisDeg))
 	{
 
-		// カメラ座標を中心として、中止店を回転させる
+		// カメラ座標を中心として、注視点を回転させる
 
 		// 加えたい回転量
 		Quaternion rotPow;
@@ -138,6 +142,33 @@ VECTOR Camera::GetPos(void) const
 	return pos_;
 }
 
+void Camera::SetBeforeDrawFollow(void)
+{
+
+	// 追従対象の位置
+	VECTOR followPos = followTransform_->pos;
+	// 追従対象の向き
+	Quaternion followRot = followTransform_->quaRot;
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	// カメラ位置の更新
+	pos_ = VAdd(followPos, relativeCPos);
+	// カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+	// 注視点の更新
+	targetPos_ = VAdd(pos_, relativeTPos);
+	// カメラの上方向
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+
+}
+
+void Camera::SetFollow(const Transform* follow)
+{
+
+	followTransform_ = follow;
+
+}
+
 void Camera::ChangeMode(MODE mode)
 {
 
@@ -153,6 +184,8 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FIXED_POINT:
 		break;
 	case Camera::MODE::FREE:
+		break;
+	case Camera::MODE::FOLLOW:
 		break;
 	}
 

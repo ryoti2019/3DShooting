@@ -19,11 +19,13 @@ public:
 	void Draw(void);
 	void Release(void);
 
+	// プレイヤーのトランスフォーム
+	const Transform& GetTransform(void) const;
+
 private:
 
 	// モデル制御の基本情報
 	Transform transform_;
-
 
 };
 

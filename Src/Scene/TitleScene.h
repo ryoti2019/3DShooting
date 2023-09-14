@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneBase.h"
+#include "../Object/Common/Transform.h"
 
 class SpaceDome;
 
@@ -23,6 +24,8 @@ private:
 
 	// タイトルロゴ
 	int imgTitleLogo_;
+
+	Transform spaceDomeTrans_;
 
 	// スカイドーム
 	SpaceDome* spaceDome_;

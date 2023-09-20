@@ -1,5 +1,6 @@
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
+#include "../Manager/SceneManager.h"
 #include "../Object/Common/Transform.h"
 #include "Camera.h"
 
@@ -41,6 +42,9 @@ void Camera::SetBeforeDraw(void)
 		break;
 	case Camera::MODE::FOLLOW:
 		SetBeforeDrawFollow();
+		break;
+	case Camera::MODE::FOLLOW_SPRING:
+		SetBeforeDrawFollowSprnig();
 		break;
 	}
 
@@ -108,6 +112,7 @@ void Camera::SetBeforeDrawFree(void)
 
 		// カメラの上方向
 		cameraUp_ = rot_.GetUp();
+		//cameraUp_ = AsoUtility::DIR_U;
 
 	}
 
@@ -145,18 +150,73 @@ VECTOR Camera::GetPos(void) const
 void Camera::SetBeforeDrawFollow(void)
 {
 
-	// 追従対象の位置
+	// 追従対象(プレイヤー機)の位置
 	VECTOR followPos = followTransform_->pos;
+
 	// 追従対象の向き
 	Quaternion followRot = followTransform_->quaRot;
+
 	// 追従対象からカメラまでの相対座標
 	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+
 	// カメラ位置の更新
 	pos_ = VAdd(followPos, relativeCPos);
+
 	// カメラ位置から注視点までの相対座標
 	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+
 	// 注視点の更新
 	targetPos_ = VAdd(pos_, relativeTPos);
+
+	// カメラの上方向
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+
+}
+
+void Camera::SetBeforeDrawFollowSprnig(void)
+{
+
+	// 次回、ばね付きの実装
+	float POW_SPRING = 24.0f;
+	float dampening = 2.0f * sqrt(POW_SPRING);
+
+	// デルタタイム
+	float delta = SceneManager::GetInstance().GetDeltaTime();
+
+	// 追従対象(プレイヤー機)の位置
+	VECTOR followPos = followTransform_->pos;
+
+	// 追従対象の向き
+	Quaternion followRot = followTransform_->quaRot;
+
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_SPRING);
+
+	// 理想位置
+	VECTOR idealPos = VAdd(followPos, relativeCPos);
+
+	// 実際と理想の差
+	VECTOR diff = VSub(pos_, idealPos);
+
+	// 力 = -バネの強さ × バネの伸び - 抵抗 × カメラの速度
+	VECTOR force = VScale(diff, -POW_SPRING);
+	force = VSub(force, VScale(velocity_, dampening));
+
+	// 速度の更新
+	velocity_ = VAdd(velocity_, VScale(force, delta));
+
+	// カメラ位置の更新
+	pos_ = VAdd(pos_, VScale(velocity_, delta));
+
+	// カメラ位置の更新
+	//pos_ = VAdd(followPos, relativeCPos);
+
+	// カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+
+	// 注視点の更新
+	targetPos_ = VAdd(pos_, relativeTPos);
+
 	// カメラの上方向
 	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 
@@ -186,6 +246,8 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FREE:
 		break;
 	case Camera::MODE::FOLLOW:
+		break;
+	case Camera::MODE::FOLLOW_SPRING:
 		break;
 	}
 

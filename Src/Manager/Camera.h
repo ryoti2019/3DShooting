@@ -27,13 +27,17 @@ public:
 	// 追従対象からカメラ位置までの相対座標(完全追従)
 	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 25.0f, -80.0f };
 
+	// 追従対象からカメラ位置までの相対座標(ばね付き)
+	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 30.0f, -10.0f };
+
 	// カメラモード
 	enum class MODE
 	{
 		NONE,
 		FIXED_POINT,	// 定点カメラ
 		FREE,			// フリーモード
-		FOLLOW, // 追従モード
+		FOLLOW,			// 追従モード
+		FOLLOW_SPRING,	// ばね
 	};
 
 	Camera(void);
@@ -44,12 +48,12 @@ public:
 	void SetBeforeDraw(void);
 	void SetBeforeDrawFixedPoint(void);
 	void SetBeforeDrawFree(void);
+	void SetBeforeDrawFollow(void);
+	void SetBeforeDrawFollowSprnig(void);
 	void Draw(void);
 	void Release(void);
 
 	VECTOR GetPos(void) const;
-
-	void SetBeforeDrawFollow(void);
 
 	// 追従対象の設定
 	void SetFollow(const Transform* follow);
@@ -70,6 +74,9 @@ private:
 
 	// カメラの上方向
 	VECTOR cameraUp_;
+
+	// カメラの速度
+	VECTOR velocity_;
 
 	// カメラの回転
 	Quaternion rot_;

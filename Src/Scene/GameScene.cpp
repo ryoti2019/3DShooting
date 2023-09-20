@@ -33,7 +33,7 @@ void GameScene::Init(void)
 	// カメラモード：追従
 	Camera* camera = SceneManager::GetInstance().GetCamera();
 	camera->SetFollow(&playerShip_->GetTransform());
-	camera->ChangeMode(Camera::MODE::FOLLOW);
+	camera->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 
 }
 

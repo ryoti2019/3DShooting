@@ -5,7 +5,7 @@ class Grid
 public:
 
 	// ü‚Ì’·‚³
-	static constexpr float LEN = 1200.0f;
+	static constexpr float LEN = 3000.0f;
 
 	// ü‚Ì’·‚³‚Ì”¼•ª
 	static constexpr float HLEN = LEN / 2.0f;

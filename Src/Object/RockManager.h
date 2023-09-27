@@ -35,6 +35,9 @@ private:
 	// 監視対象
 	const Transform& target_;
 	
+	// 岩のポインタ
+	Rock* rock_;
+
 	// マップ管理
 	// キー		：マップ座標
 	// バリュー	：岩の配列(15個分)
@@ -42,7 +45,6 @@ private:
 
 	// {0,0,0} =>岩A、岩B、岩C
 	// {1,0,0} =>岩X、岩Y、岩Z
-
 
 	// ランダム生成
 	Rock* CreateRandom(IntVector3 mapPos);

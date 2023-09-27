@@ -4,6 +4,7 @@
 class Grid;
 class SpaceDome;
 class PlayerShip;
+class RockManager;
 
 class GameScene : public SceneBase
 {
@@ -31,5 +32,8 @@ private:
 
 	// プレイヤー
 	PlayerShip* playerShip_;
+
+	// 背景のスペースデブリ
+	RockManager* rockManager_;
 
 };

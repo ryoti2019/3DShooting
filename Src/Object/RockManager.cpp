@@ -8,6 +8,7 @@
 RockManager::RockManager(const Transform& target) : target_(target)
 {
 	// 監視対象を設定
+
 }
 
 RockManager::~RockManager(void)
@@ -20,6 +21,46 @@ void RockManager::Init(void)
 
 void RockManager::Update(void)
 {
+
+	// 監視対象の座標をマップ座標に変換
+	VECTOR monitorMapPos = target_.pos;
+	monitorMapPos.x /= MAP_SIZE;
+	monitorMapPos.y /= MAP_SIZE;
+	monitorMapPos.z /= MAP_SIZE;
+
+	// 変換されたマップ座標を中心に27マップ検索
+	IntVector3 startMapPos = IntVector3(monitorMapPos);
+
+	// 岩が生成されているか確認する用(マップ座標)
+	IntVector3 checkMapPos;
+
+	checkMapPos = startMapPos;
+
+	// 27マップ分のループ
+	const int loop = 3;
+	for (int x = 0; x < loop; x++)
+	{
+		for (int y = 0; y < loop; y++)
+		{
+			for (int z = 0; z < loop; z++)
+			{
+
+				// チェックするマップ座標を作る
+				checkMapPos = { x + startMapPos.x,
+								y + startMapPos.y,
+								z + startMapPos.z };
+
+				// 岩を指定個数分、ランダムに生成する
+				for (int i = 0; i < NUM_CREATE; i++)
+				{
+					// 岩を1つ生成する
+					CreateRandom(checkMapPos);
+				}
+
+			}
+		}
+	}
+
 }
 
 void RockManager::Draw(void)
@@ -65,37 +106,39 @@ void RockManager::Release(void)
 Rock* RockManager::CreateRandom(IntVector3 mapPos)
 {
 
-	// 岩のモデルをランダムに決める
-	int modelId;
+	// 岩を1個作る
 
-	int rand = GetRand(2);
-	if (rand == 0)
-	{
-		modelId = static_cast<int>(ResourceManager::SRC::ROCK01);
-	}
-	if (rand == 1)
-	{
-		modelId = static_cast<int>(ResourceManager::SRC::ROCK02);
-	}
+	// 岩のモデルをランダムに決める
+	int modelId = static_cast<int>(ResourceManager::SRC::ROCK01);
+
+	//int rand = GetRand(2);
+	//if (rand == 0)
+	//{
+	//	modelId = static_cast<int>(ResourceManager::SRC::ROCK01);
+	//}
+	//if (rand == 1)
+	//{
+	//	modelId = static_cast<int>(ResourceManager::SRC::ROCK02);
+	//}
 
 	// 位置をランダムに
 	// ワールド座標に変換
 	VECTOR pos;
-
-
+	pos = { 10.0f,10.0f,10.0f };
 
 	// 角度をランダムに
 	VECTOR angles;
+	angles = { 45.0f,45.0f,45.0f };
 
 	// 大きさをランダムに
 	VECTOR scale;
+	scale = { 10.0f,10.0f,10.0f };
 
 	// 生成したRockクラスのインスタンス&初期化を行い、返り値に返す
-
-
-
+	rock_->Init(modelId, pos, angles, scale);
 
 	return nullptr;
+
 }
 
 void RockManager::DrawDebugMap(void)

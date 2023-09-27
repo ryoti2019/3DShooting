@@ -2,6 +2,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
+#include "../Object/RockManager.h"
 #include "../Object/Grid.h"
 #include "../Object/SpaceDome.h"
 #include "../Object/PlayerShip.h"
@@ -35,6 +36,10 @@ void GameScene::Init(void)
 	camera->SetFollow(&playerShip_->GetTransform());
 	camera->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 
+	// スペースデブリ
+	rockManager_ = new RockManager(playerShip_->GetTransform());
+	rockManager_->Init();
+
 }
 
 void GameScene::Update(void)
@@ -46,6 +51,8 @@ void GameScene::Update(void)
 
 	playerShip_->Update();
 
+	rockManager_->Update();
+
 }
 
 void GameScene::Draw(void)
@@ -53,8 +60,13 @@ void GameScene::Draw(void)
 
 	grid_->Draw();
 
+	// スカイドーム(背景や不透明を最初に描画)
 	spaceDome_->Draw();
 
+	// スペースデブリ
+	rockManager_->Draw();
+
+	// キャラクター系
 	playerShip_->Draw();
 
 }
@@ -63,9 +75,15 @@ void GameScene::Release(void)
 {
 
 	grid_->Release();
+	delete grid_;
 
 	spaceDome_->Release();
+	delete spaceDome_;
 
 	playerShip_->Release();
+	delete playerShip_;
+
+	rockManager_->Release();
+	delete rockManager_;
 
 }

@@ -1,3 +1,4 @@
+#include <DxLib.h>
 #include "../Manager/ResourceManager.h"
 #include "../Common/IntVector3.h"
 #include "../Utility/AsoUtility.h"
@@ -33,8 +34,8 @@ void RockManager::Update(void)
 
 	// 岩が生成されているか確認する用(マップ座標)
 	IntVector3 checkMapPos;
+	startMapPos.Sub(1);
 
-	checkMapPos = startMapPos;
 
 	// 27マップ分のループ
 	const int loop = 3;
@@ -50,11 +51,24 @@ void RockManager::Update(void)
 								y + startMapPos.y,
 								z + startMapPos.z };
 
-				// 岩を指定個数分、ランダムに生成する
-				for (int i = 0; i < NUM_CREATE; i++)
+				// 既に岩を生成しているマップ座標かチェック
+				if (mapRocks_.count(checkMapPos) == 0)
 				{
-					// 岩を1つ生成する
-					CreateRandom(checkMapPos);
+
+					std::vector<Rock*>tmpRocks;
+
+
+					// 岩を指定個数分、ランダムに生成する
+					for (int i = 0; i < NUM_CREATE; i++)
+					{
+						// 岩を1つ生成する
+						tmpRocks.emplace_back(CreateRandom(checkMapPos));
+					}
+
+					// マップ連想配列にキーとバリューをセットに格納
+					// マップ管理配列に、マップ座標と生成した複数の岩を格納
+					mapRocks_.emplace(checkMapPos, tmpRocks);
+
 				}
 
 			}
@@ -109,35 +123,45 @@ Rock* RockManager::CreateRandom(IntVector3 mapPos)
 	// 岩を1個作る
 
 	// 岩のモデルをランダムに決める
-	int modelId = static_cast<int>(ResourceManager::SRC::ROCK01);
+	int modelId = 0;
 
-	//int rand = GetRand(2);
-	//if (rand == 0)
-	//{
-	//	modelId = static_cast<int>(ResourceManager::SRC::ROCK01);
-	//}
-	//if (rand == 1)
-	//{
-	//	modelId = static_cast<int>(ResourceManager::SRC::ROCK02);
-	//}
+	int Rand = GetRand(2);
+	if (Rand == 0)
+	{
+		modelId = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ROCK01);
+	}
+	if (Rand == 1)
+	{
+		modelId = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ROCK02);
+	}
 
 	// 位置をランダムに
 	// ワールド座標に変換
+	int randPosX = rand();
+	int randPosY = rand();
+	int randPosZ = rand();
 	VECTOR pos;
-	pos = { 10.0f,10.0f,10.0f };
-
+	pos = { mapPos.x,mapPos.y,mapPos.z };
+	//pos = { 0.0f,0.0f,0.0f };
 	// 角度をランダムに
+	int randAngleX = rand();
+	int randAngleY = rand();
+	int randAngleZ = rand();
 	VECTOR angles;
-	angles = { 45.0f,45.0f,45.0f };
-
+	angles = { 1.0f * randAngleX,1.0f * randAngleY,1.0f * randAngleZ };
+	//angles = { 1.0f,1.0f,1.0f };
 	// 大きさをランダムに
+	int randScaleX = rand();
+	int randScaleY = rand();
+	int randScaleZ = rand();
 	VECTOR scale;
-	scale = { 10.0f,10.0f,10.0f };
-
+	scale = { 10.0f ,10.0f ,10.0f  };
+	//scale = { 10.0f,10.0f,10.0f };
 	// 生成したRockクラスのインスタンス&初期化を行い、返り値に返す
-	rock_->Init(modelId, pos, angles, scale);
+	Rock* ret = new Rock();
+	ret->Init(modelId, pos, angles, scale);
 
-	return nullptr;
+	return ret;
 
 }
 

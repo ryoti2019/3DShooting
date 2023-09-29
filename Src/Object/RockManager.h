@@ -34,7 +34,7 @@ private:
 
 	// ŠÄ‹‘ÎÛ
 	const Transform& target_;
-	
+
 	// Šâ‚Ìƒ|ƒCƒ“ƒ^
 	Rock* rock_;
 

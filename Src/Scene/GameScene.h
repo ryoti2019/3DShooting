@@ -5,6 +5,7 @@ class Grid;
 class SpaceDome;
 class PlayerShip;
 class RockManager;
+class Stage;
 
 class GameScene : public SceneBase
 {
@@ -35,5 +36,8 @@ private:
 
 	// 背景のスペースデブリ
 	RockManager* rockManager_;
+
+	// ステージ
+	Stage* stage_;
 
 };

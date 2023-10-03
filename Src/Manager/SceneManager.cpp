@@ -73,6 +73,11 @@ void SceneManager::Init3D(void)
 	// 正面から斜め下に向かったライト
 	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
 
+	// フォグ設定
+	SetFogEnable(true);
+	SetFogColor(5, 5, 5);
+	SetFogStartEnd(3000.0f, 15000.0f);
+
 }
 
 void SceneManager::Update(void)

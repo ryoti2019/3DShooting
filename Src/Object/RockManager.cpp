@@ -9,7 +9,6 @@
 RockManager::RockManager(const Transform& target) : target_(target)
 {
 	// 監視対象を設定
-
 }
 
 RockManager::~RockManager(void)
@@ -18,6 +17,11 @@ RockManager::~RockManager(void)
 
 void RockManager::Init(void)
 {
+
+	// ゲーム開始時のラグをなくすため、
+	// 暗転中に27マップ分作成しておく
+	Update();
+
 }
 
 void RockManager::Update(void)
@@ -35,7 +39,6 @@ void RockManager::Update(void)
 	// 岩が生成されているか確認する用(マップ座標)
 	IntVector3 checkMapPos;
 	startMapPos.Sub(1);
-
 
 	// 27マップ分のループ
 	const int loop = 3;
@@ -74,6 +77,44 @@ void RockManager::Update(void)
 			}
 		}
 	}
+
+	// ある程度自機が岩から離れたらメモリ節約のため削除
+	IntVector3 intV;
+	int len;
+
+	// 削除すべきキーを可変長配列に変換する
+	std::vector<IntVector3>deleteMapKeys;
+
+	// 現在、生成しているデブリマップを総チェック
+	for (const auto& p : mapRocks_)
+	{
+
+		// 監視対象からどれくらい離れているかマップ距離を出す
+		intV = p.first;
+		len = static_cast<int>(abs(static_cast<float>(intV.x) - monitorMapPos.x))
+			+ static_cast<int>(abs(static_cast<float>(intV.y) - monitorMapPos.y))
+			+ static_cast<int>(abs(static_cast<float>(intV.z) - monitorMapPos.z));
+
+		// ５以上マップから離れていたらメモリから解放
+		if (len > 4)
+		{
+			// std::mapに格納されているRockメモリを開放
+			for (auto rock : p.second)
+			{
+				rock->Release();
+				delete rock;
+			}
+			// 一旦、削除対象となっているキーを配列に確保
+			deleteMapKeys.emplace_back(p.first);
+		}
+	}
+
+	for(const auto& key : deleteMapKeys)
+	{
+		// map(連想配列)から対象のキーを削除する
+		mapRocks_.erase(key);
+	}
+
 
 }
 
@@ -121,6 +162,7 @@ Rock* RockManager::CreateRandom(IntVector3 mapPos)
 {
 
 	// 岩を1個作る
+	auto& ins = ResourceManager::GetInstance();
 
 	// 岩のモデルをランダムに決める
 	int modelId = 0;
@@ -136,27 +178,34 @@ Rock* RockManager::CreateRandom(IntVector3 mapPos)
 	}
 
 	// 位置をランダムに
-	// ワールド座標に変換
-	int randPosX = rand();
-	int randPosY = rand();
-	int randPosZ = rand();
+	// グローバル座標に変換
 	VECTOR pos;
-	pos = { mapPos.x,mapPos.y,mapPos.z };
-	//pos = { 0.0f,0.0f,0.0f };
+	pos.x = mapPos.x * MAP_SIZE;
+	pos.y = mapPos.y * MAP_SIZE;
+	pos.z = mapPos.z * MAP_SIZE;
+
+	// -1000～1000
+	// (0～2000) - 1000
+	int hMapSize = MAP_SIZE / 2;
+	int rX = GetRand(MAP_SIZE) - hMapSize;
+	int rY = GetRand(MAP_SIZE) - hMapSize;
+	int rZ = GetRand(MAP_SIZE) - hMapSize;
+	pos.x += rX;
+	pos.y += rY;
+	pos.z += rZ;
+
 	// 角度をランダムに
-	int randAngleX = rand();
-	int randAngleY = rand();
-	int randAngleZ = rand();
 	VECTOR angles;
-	angles = { 1.0f * randAngleX,1.0f * randAngleY,1.0f * randAngleZ };
-	//angles = { 1.0f,1.0f,1.0f };
+	angles.x = AsoUtility::Deg2RadF(GetRand(360));
+	angles.y = AsoUtility::Deg2RadF(GetRand(360));
+	angles.z = AsoUtility::Deg2RadF(GetRand(360));
+
 	// 大きさをランダムに
-	int randScaleX = rand();
-	int randScaleY = rand();
-	int randScaleZ = rand();
 	VECTOR scale;
-	scale = { 10.0f ,10.0f ,10.0f  };
-	//scale = { 10.0f,10.0f,10.0f };
+	scale.x = 10.0f + AsoUtility::Deg2RadF(GetRand(100));
+	scale.y = 10.0f + AsoUtility::Deg2RadF(GetRand(100));
+	scale.z = 10.0f + AsoUtility::Deg2RadF(GetRand(100));
+	
 	// 生成したRockクラスのインスタンス&初期化を行い、返り値に返す
 	Rock* ret = new Rock();
 	ret->Init(modelId, pos, angles, scale);

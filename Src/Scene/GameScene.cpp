@@ -6,6 +6,7 @@
 #include "../Object/Grid.h"
 #include "../Object/SpaceDome.h"
 #include "../Object/PlayerShip.h"
+#include "../Object/Stage.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -40,6 +41,10 @@ void GameScene::Init(void)
 	rockManager_ = new RockManager(playerShip_->GetTransform());
 	rockManager_->Init();
 
+	// ステージ
+	stage_ = new Stage();
+	stage_->Init();
+
 }
 
 void GameScene::Update(void)
@@ -52,6 +57,8 @@ void GameScene::Update(void)
 	playerShip_->Update();
 
 	rockManager_->Update();
+
+	stage_->Update();
 
 }
 
@@ -69,6 +76,9 @@ void GameScene::Draw(void)
 	// キャラクター系
 	playerShip_->Draw();
 
+	// ステージ
+	stage_->Draw();
+
 }
 
 void GameScene::Release(void)
@@ -85,5 +95,8 @@ void GameScene::Release(void)
 
 	rockManager_->Release();
 	delete rockManager_;
+
+	stage_->Release();
+	delete stage_;
 
 }

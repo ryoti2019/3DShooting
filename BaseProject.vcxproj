@@ -36,6 +36,7 @@
     <ClCompile Include="Src\Object\Grid.cpp" />
     <ClCompile Include="Src\Object\Rock.cpp" />
     <ClCompile Include="Src\Object\SpaceDome.cpp" />
+    <ClCompile Include="Src\Object\Stage.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
@@ -59,6 +60,7 @@
     <ClInclude Include="Src\Object\PlayerShip.h" />
     <ClInclude Include="Src\Object\Rock.h" />
     <ClInclude Include="Src\Object\SpaceDome.h" />
+    <ClInclude Include="Src\Object\Stage.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />

@@ -28,6 +28,9 @@ void SpaceDome::Init(void)
 	transform_.quaRotLocal = Quaternion();
 	transform_.Update();
 
+	MV1SetUseZBuffer(transform_.modelId, false);
+	MV1SetWriteZBuffer(transform_.modelId, false);
+
 }
 
 void SpaceDome::Update(void)

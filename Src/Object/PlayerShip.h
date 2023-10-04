@@ -13,6 +13,15 @@ public:
 	static constexpr float SPEED_ROT_DEG_Y = 1.0f;
 	static constexpr float SPEED_ROT_DEG_X = 1.0f;
 
+	// エフェクトから注視点までの相対座標
+	static constexpr VECTOR RELATIVE_F2T_POS = { 0.0f, 0.0f, 0.0f };
+
+	// 追従対象からエフェクトまでの相対座標(完全追従)
+	static constexpr VECTOR LOCAL_POS_L = { -5.0f, 0.0f, -20.0f };
+
+	// 追従対象からエフェクトまでの相対座標(完全追従)
+	static constexpr VECTOR LOCAL_POS_R = { 5.0f, 0.0f, -20.0f };
+
 	// コンストラクタ
 	PlayerShip(void);
 
@@ -31,6 +40,20 @@ private:
 
 	// モデル制御の基本情報
 	Transform transform_;
+
+	// 噴射エフェクト
+	int effectJetResId_;
+	int effectJetLPlayId_;
+	int effectJetRPlayId_;
+
+	VECTOR effectLPos_;
+	VECTOR effectRPos_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+
+	// エフェクト制御
+	void SyncJetEffect(void);
 
 	// 操作
 	void ProcessTurn(void);

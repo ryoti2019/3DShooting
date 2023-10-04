@@ -1,3 +1,5 @@
+#include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "../Manager/ResourceManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
@@ -30,6 +32,9 @@ void PlayerShip::Init(void)
 	transform_.quaRotLocal = Quaternion();
 	transform_.Update();
 
+	// エフェクト初期化
+	InitEffect();
+
 }
 
 void PlayerShip::Update(void)
@@ -50,6 +55,7 @@ void PlayerShip::Update(void)
 
 	transform_.Update();
 
+	SyncJetEffect();
 }
 
 void PlayerShip::Draw(void)
@@ -59,11 +65,67 @@ void PlayerShip::Draw(void)
 
 void PlayerShip::Release(void)
 {
+
+	// エフェクト停止
+	StopEffekseer3DEffect(effectJetLPlayId_);
+	StopEffekseer3DEffect(effectJetRPlayId_);
+
 }
 
 const Transform& PlayerShip::GetTransform(void) const
 {
 	return transform_;
+}
+
+void PlayerShip::InitEffect(void)
+{
+
+	// 噴射エフェクト
+	effectJetResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::JET).handleId_;
+
+	// エフェクト再生
+	effectJetLPlayId_ = PlayEffekseer3DEffect(effectJetResId_);
+	effectJetRPlayId_ = PlayEffekseer3DEffect(effectJetResId_);
+
+	// 大きさ
+	float SCALE = 5.0f;
+	SetScalePlayingEffekseer3DEffect(effectJetLPlayId_, SCALE, SCALE, SCALE);
+	SetScalePlayingEffekseer3DEffect(effectJetRPlayId_, SCALE, SCALE, SCALE);
+
+	// エフェクトの位置
+	SyncJetEffect();
+
+}
+
+void PlayerShip::SyncJetEffect(void)
+{
+
+	// ばね付きの実装
+	float POW_SPRING = 24.0f;
+	float dampening = 2.0f * sqrt(POW_SPRING);
+
+	// デルタタイム
+	float delta = SceneManager::GetInstance().GetDeltaTime();
+
+	// 追従対象(プレイヤー機)の位置
+	VECTOR followPos = transform_.pos;
+
+	// 追従対象の向き
+	Quaternion followRot = transform_.quaRot;
+
+	// 追従対象から自機までの相対座標
+	VECTOR effectLPos = followRot.PosAxis(LOCAL_POS_L);
+	VECTOR effectRPos = followRot.PosAxis(LOCAL_POS_R);
+
+	// カメラ位置の更新
+	effectLPos_ = VAdd(followPos, effectLPos);
+	effectRPos_ = VAdd(followPos, effectRPos);
+
+	// 位置の設定
+	SetPosPlayingEffekseer3DEffect(effectJetLPlayId_, effectLPos_.x, effectLPos_.y, effectLPos_.z);
+	SetPosPlayingEffekseer3DEffect(effectJetRPlayId_, effectRPos_.x, effectRPos_.y, effectRPos_.z);
+
 }
 
 void PlayerShip::ProcessTurn(void)

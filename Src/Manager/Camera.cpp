@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
@@ -54,6 +55,9 @@ void Camera::SetBeforeDraw(void)
 		targetPos_, 
 		cameraUp_
 	);
+
+	// DXライブラリのカメラとEffekseerのカメラを同期する
+	Effekseer_Sync3DSetting();
 
 }
 
@@ -176,7 +180,7 @@ void Camera::SetBeforeDrawFollow(void)
 void Camera::SetBeforeDrawFollowSprnig(void)
 {
 
-	// 次回、ばね付きの実装
+	// ばね付きの実装
 	float POW_SPRING = 24.0f;
 	float dampening = 2.0f * sqrt(POW_SPRING);
 

@@ -65,7 +65,6 @@ void PlayerShip::Update(void)
 	transform_.Update();
 
 	SyncJetEffect();
-
 	SyncBoostEffect();
 
 }
@@ -194,8 +193,11 @@ void PlayerShip::SyncJetEffect(void)
 	effectRPos_ = VAdd(followPos, effectRPos);
 
 	// à íuÇÃê›íË
+	// ç∂
 	SetPosPlayingEffekseer3DEffect(effectJetLPlayId_, effectLPos_.x, effectLPos_.y, effectLPos_.z);
 	SetRotationPlayingEffekseer3DEffect(effectJetLPlayId_, rot.x, rot.y, rot.z);
+
+	// âE
 	SetPosPlayingEffekseer3DEffect(effectJetRPlayId_, effectRPos_.x, effectRPos_.y, effectRPos_.z);
 	SetRotationPlayingEffekseer3DEffect(effectJetRPlayId_, rot.x, rot.y, rot.z);
 

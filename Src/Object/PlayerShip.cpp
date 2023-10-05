@@ -35,6 +35,8 @@ void PlayerShip::Init(void)
 	// エフェクト初期化
 	InitEffect();
 
+	speedBoost_ = 0.0f;
+
 }
 
 void PlayerShip::Update(void)
@@ -43,19 +45,29 @@ void PlayerShip::Update(void)
 	// 回転操作(移動処理前に)
 	ProcessTurn();
 
+	// ブースト
+	ProcessBoost();
+
 	VECTOR forward = transform_.GetForward();
+
+	// 移動
+	transform_.pos =
+		VAdd(transform_.pos, VScale(forward, SPEED_MOVE + speedBoost_));
 
 	float delta = SceneManager::GetInstance().GetDeltaTime();
 
 	// 移動
-	transform_.pos = VAdd(transform_.pos, VScale(forward, SPEED_MOVE * delta));
+	//transform_.pos = VAdd(transform_.pos, VScale(forward, SPEED_MOVE * delta));
 
 	// カメラ位置とカメラ注視点
-	transform_.pos = VAdd(transform_.pos, forward);
+	//transform_.pos = VAdd(transform_.pos, forward);
 
 	transform_.Update();
 
 	SyncJetEffect();
+
+	SyncBoostEffect();
+
 }
 
 void PlayerShip::Draw(void)
@@ -77,12 +89,69 @@ const Transform& PlayerShip::GetTransform(void) const
 	return transform_;
 }
 
+void PlayerShip::ProcessBoost(void)
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	// 右旋回
+	if (ins.IsTrgDown(KEY_INPUT_B))
+	{
+
+		// エフェクト再生
+		effectBoostPlayId_ = PlayEffekseer3DEffect(effectBoostResId_);
+
+		float SCALE = 10.0f;
+		// 大きさ
+		SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, SCALE, SCALE, SCALE);
+
+		// エフェクトの位置
+		SyncBoostEffect();
+
+		speedBoost_ = 10.0f;
+
+	}
+	if (speedBoost_ > 0.0f)
+	{
+		speedBoost_ -= 0.1f;
+	}
+
+}
+
+void PlayerShip::SyncBoostEffect(void)
+{
+
+	// 追従対象(プレイヤー機)の位置
+	VECTOR followPos = transform_.pos;
+
+	// 追従対象の向き
+	Quaternion followRot = transform_.quaRot;
+
+	VECTOR rot = Quaternion::ToEuler(followRot);
+
+	// 追従対象から自機までの相対座標
+	VECTOR effectLPos = followRot.PosAxis(LOCAL_POS_L);
+
+	// エフェクトの位置の更新
+	effectBoostPos_ = VAdd(followPos, effectLPos);
+
+	// 位置の設定
+	SetPosPlayingEffekseer3DEffect(effectBoostPlayId_, effectBoostPos_.x, effectBoostPos_.y, effectBoostPos_.z);
+	SetRotationPlayingEffekseer3DEffect(effectBoostPlayId_, rot.x, rot.y, rot.z);
+	transform_.Update();
+
+}
+
 void PlayerShip::InitEffect(void)
 {
 
 	// 噴射エフェクト
 	effectJetResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::JET).handleId_;
+
+	// ブーストエフェクト
+	effectBoostResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::BOOST).handleId_;
 
 	// エフェクト再生
 	effectJetLPlayId_ = PlayEffekseer3DEffect(effectJetResId_);
@@ -101,12 +170,12 @@ void PlayerShip::InitEffect(void)
 void PlayerShip::SyncJetEffect(void)
 {
 
-	// ばね付きの実装
-	float POW_SPRING = 24.0f;
-	float dampening = 2.0f * sqrt(POW_SPRING);
+	//// ばね付きの実装
+	//float POW_SPRING = 24.0f;
+	//float dampening = 2.0f * sqrt(POW_SPRING);
 
-	// デルタタイム
-	float delta = SceneManager::GetInstance().GetDeltaTime();
+	//// デルタタイム
+	//float delta = SceneManager::GetInstance().GetDeltaTime();
 
 	// 追従対象(プレイヤー機)の位置
 	VECTOR followPos = transform_.pos;
@@ -114,17 +183,23 @@ void PlayerShip::SyncJetEffect(void)
 	// 追従対象の向き
 	Quaternion followRot = transform_.quaRot;
 
+	VECTOR rot = Quaternion::ToEuler(followRot);
+
 	// 追従対象から自機までの相対座標
 	VECTOR effectLPos = followRot.PosAxis(LOCAL_POS_L);
 	VECTOR effectRPos = followRot.PosAxis(LOCAL_POS_R);
 
-	// カメラ位置の更新
+	// エフェクトの位置の更新
 	effectLPos_ = VAdd(followPos, effectLPos);
 	effectRPos_ = VAdd(followPos, effectRPos);
 
 	// 位置の設定
 	SetPosPlayingEffekseer3DEffect(effectJetLPlayId_, effectLPos_.x, effectLPos_.y, effectLPos_.z);
+	SetRotationPlayingEffekseer3DEffect(effectJetLPlayId_, rot.x, rot.y, rot.z);
 	SetPosPlayingEffekseer3DEffect(effectJetRPlayId_, effectRPos_.x, effectRPos_.y, effectRPos_.z);
+	SetRotationPlayingEffekseer3DEffect(effectJetRPlayId_, rot.x, rot.y, rot.z);
+
+	transform_.Update();
 
 }
 

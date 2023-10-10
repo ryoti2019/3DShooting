@@ -3,6 +3,7 @@
 #include "../Manager/ResourceManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
+#include "../Scene/GameScene.h"
 #include "../Utility/AsoUtility.h"
 #include "PlayerShip.h"
 
@@ -37,41 +38,84 @@ void PlayerShip::Init(void)
 
 	speedBoost_ = 0.0f;
 
+	effectTime_ = 0.0f;
+
+	isEffect_ = false;
+
+	// 初期状態
+	ChangeState(STATE::RUN);
+
 }
 
 void PlayerShip::Update(void)
 {
 
-	// 回転操作(移動処理前に)
-	ProcessTurn();
+	//// 回転操作(移動処理前に)
+	//ProcessTurn();
 
-	// ブースト
-	ProcessBoost();
+	//// ブースト
+	//ProcessBoost();
 
-	VECTOR forward = transform_.GetForward();
+	//VECTOR forward = transform_.GetForward();
 
-	// 移動
-	transform_.pos =
-		VAdd(transform_.pos, VScale(forward, SPEED_MOVE + speedBoost_));
+	//// 移動
+	//transform_.pos =
+	//	VAdd(transform_.pos, VScale(forward, SPEED_MOVE + speedBoost_));
 
-	float delta = SceneManager::GetInstance().GetDeltaTime();
+	//float delta = SceneManager::GetInstance().GetDeltaTime();
 
-	// 移動
-	//transform_.pos = VAdd(transform_.pos, VScale(forward, SPEED_MOVE * delta));
+	//// 移動
+	////transform_.pos = VAdd(transform_.pos, VScale(forward, SPEED_MOVE * delta));
 
-	// カメラ位置とカメラ注視点
-	//transform_.pos = VAdd(transform_.pos, forward);
+	//// カメラ位置とカメラ注視点
+	////transform_.pos = VAdd(transform_.pos, forward);
 
-	transform_.Update();
+	//transform_.Update();
 
 	SyncJetEffect();
 	SyncBoostEffect();
+	SyncDestroyEffect();
+
+	switch (state_)
+	{
+	case PlayerShip::STATE::NONE:
+		break;
+	case PlayerShip::STATE::RUN:
+		UpdateRun();
+		break;
+	case PlayerShip::STATE::DESTROY:
+		UpdateDestroy();
+		break;
+	}
 
 }
 
 void PlayerShip::Draw(void)
 {
-	MV1DrawModel(transform_.modelId);
+
+	switch (state_)
+	{
+	case PlayerShip::STATE::NONE:
+		break;
+	case PlayerShip::STATE::RUN:
+		// 自機モデル
+		MV1DrawModel(transform_.modelId);
+		break;
+	case PlayerShip::STATE::DESTROY:
+		break;
+	}
+
+}
+
+void PlayerShip::Destroy(void)
+{
+	// 破壊状態へ移行
+	ChangeState(STATE::DESTROY);
+}
+
+bool PlayerShip::IsDestroy(void) const
+{
+	return state_ == STATE::DESTROY;
 }
 
 void PlayerShip::Release(void)
@@ -94,7 +138,7 @@ void PlayerShip::ProcessBoost(void)
 	auto& ins = InputManager::GetInstance();
 
 	// 右旋回
-	if (ins.IsTrgDown(KEY_INPUT_B))
+	if (ins.IsTrgDown(KEY_INPUT_B) && speedBoost_ <= 0.0f)
 	{
 
 		// エフェクト再生
@@ -129,10 +173,10 @@ void PlayerShip::SyncBoostEffect(void)
 	VECTOR rot = Quaternion::ToEuler(followRot);
 
 	// 追従対象から自機までの相対座標
-	VECTOR effectLPos = followRot.PosAxis(LOCAL_POS_L);
+	VECTOR effectPos = followRot.PosAxis(LOCAL_POS_L);
 
 	// エフェクトの位置の更新
-	effectBoostPos_ = VAdd(followPos, effectLPos);
+	effectBoostPos_ = VAdd(followPos, effectPos);
 
 	// 位置の設定
 	SetPosPlayingEffekseer3DEffect(effectBoostPlayId_, effectBoostPos_.x, effectBoostPos_.y, effectBoostPos_.z);
@@ -152,6 +196,10 @@ void PlayerShip::InitEffect(void)
 	effectBoostResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::BOOST).handleId_;
 
+	// 自機破壊エフェクト
+	effectDestroyResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::PLAYER_SHIP_EXPLOSION).handleId_;
+
 	// エフェクト再生
 	effectJetLPlayId_ = PlayEffekseer3DEffect(effectJetResId_);
 	effectJetRPlayId_ = PlayEffekseer3DEffect(effectJetResId_);
@@ -168,13 +216,6 @@ void PlayerShip::InitEffect(void)
 
 void PlayerShip::SyncJetEffect(void)
 {
-
-	//// ばね付きの実装
-	//float POW_SPRING = 24.0f;
-	//float dampening = 2.0f * sqrt(POW_SPRING);
-
-	//// デルタタイム
-	//float delta = SceneManager::GetInstance().GetDeltaTime();
 
 	// 追従対象(プレイヤー機)の位置
 	VECTOR followPos = transform_.pos;
@@ -200,6 +241,31 @@ void PlayerShip::SyncJetEffect(void)
 	// 右
 	SetPosPlayingEffekseer3DEffect(effectJetRPlayId_, effectRPos_.x, effectRPos_.y, effectRPos_.z);
 	SetRotationPlayingEffekseer3DEffect(effectJetRPlayId_, rot.x, rot.y, rot.z);
+
+	transform_.Update();
+
+}
+
+void PlayerShip::SyncDestroyEffect(void)
+{
+
+	// 追従対象(プレイヤー機)の位置
+	VECTOR followPos = transform_.pos;
+
+	// 追従対象の向き
+	Quaternion followRot = transform_.quaRot;
+
+	VECTOR rot = Quaternion::ToEuler(followRot);
+
+	// 追従対象から自機までの相対座標
+	VECTOR effectPos = followRot.PosAxis(LOCAL_POS_L);
+
+	// エフェクトの位置の更新
+	effectDestroyPos_ = VAdd(followPos, effectPos);
+
+	// 位置の設定
+	SetPosPlayingEffekseer3DEffect(effectDestroyPlayId_, effectDestroyPos_.x, effectDestroyPos_.y, effectDestroyPos_.z);
+	SetRotationPlayingEffekseer3DEffect(effectDestroyPlayId_, rot.x, rot.y, rot.z);
 
 	transform_.Update();
 
@@ -250,5 +316,83 @@ void PlayerShip::Turn(float deg, VECTOR axis)
 
 	// ③今回作成した回転量を、自機の回転量に加える(合成する)
 	transform_.quaRot = transform_.quaRot.Mult(rotPow);
+
+}
+
+void PlayerShip::ChangeState(STATE state)
+{
+
+	// 状態の更新
+	state_ = state;
+
+	// 状態別の初期化処理
+	switch (state_)
+	{
+	case PlayerShip::STATE::NONE:
+		break;
+	case PlayerShip::STATE::RUN:
+		break;
+	case PlayerShip::STATE::DESTROY:
+		break;
+	}
+
+}
+
+void PlayerShip::UpdateRun(void)
+{
+
+	// 回転操作(移動の前に)
+	ProcessTurn();
+
+	// ブースト
+	ProcessBoost();
+
+	// 前方向を取得
+	VECTOR forward = transform_.GetForward();
+
+	// 移動
+	transform_.pos =
+		VAdd(transform_.pos, VScale(forward, SPEED_MOVE + speedBoost_));
+
+	// モデル制御の基本情報更新
+	transform_.Update();
+
+	// エフェクト制御
+	SyncJetEffect();
+
+}
+
+void PlayerShip::UpdateDestroy(void)
+{
+
+	if (effectTime_ <= 0.0f)
+	{
+		// エフェクト再生
+		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
+
+		float SCALE = 10.0f;
+		// 大きさ
+		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
+
+		// エフェクトの位置
+		SyncDestroyEffect();
+
+		effectTime_ = 3.0f;
+	}
+
+	if (effectTime_ >= 1.0f)
+	{
+		effectTime_ -= SceneManager::GetInstance().GetDeltaTime();
+	}
+
+	if (effectTime_ <= 1.0f)
+	{
+		isEffect_ = true;
+	}
+
+	if (isEffect_ == true)
+	{
+		StopEffekseer3DEffect(effectDestroyPlayId_);
+	}
 
 }

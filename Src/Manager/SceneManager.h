@@ -6,17 +6,17 @@ class Camera;
 
 class SceneManager
 {
-
+	
 public:
-
 	// シーン管理用
 	enum class SCENE_ID
 	{
 		NONE,
 		TITLE,
-		GAME
+		GAME,
+		EVENT,
 	};
-	
+
 	// インスタンスの生成
 	static void CreateInstance(void);
 

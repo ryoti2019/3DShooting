@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\BossShip.cpp" />
     <ClCompile Include="Src\Object\RockManager.cpp" />
     <ClCompile Include="Src\Object\PlayerShip.cpp" />
     <ClCompile Include="Src\Common\IntVector3.cpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="Src\Object\Rock.cpp" />
     <ClCompile Include="Src\Object\SpaceDome.cpp" />
     <ClCompile Include="Src\Object\Stage.cpp" />
+    <ClCompile Include="Src\Scene\EventScene.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
@@ -44,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\IntVector3.h" />
+    <ClInclude Include="Src\Object\BossShip.h" />
     <ClInclude Include="Src\Object\RockManager.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Application.h" />
@@ -61,6 +64,7 @@
     <ClInclude Include="Src\Object\Rock.h" />
     <ClInclude Include="Src\Object\SpaceDome.h" />
     <ClInclude Include="Src\Object\Stage.h" />
+    <ClInclude Include="Src\Scene\EventScene.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />

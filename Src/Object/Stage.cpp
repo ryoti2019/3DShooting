@@ -54,3 +54,13 @@ void Stage::Draw(void)
 void Stage::Release(void)
 {
 }
+
+int Stage::GetModelIdStage(void)
+{
+	return stage_.modelId;
+}
+
+Transform Stage::GetBossTransform(void)
+{
+	return bossShip_;
+}

@@ -18,6 +18,13 @@ public:
 	// カメラクリップ：NEAR
 	static constexpr float CAMERA_FAR = 15000.0f;
 
+	// シェイク：時間
+	static constexpr float TIME_SHAKE = 2.0f;
+	// シェイク：幅
+	static constexpr float WIDTH_SHAKE = 3.0f;
+	// シェイク：スピード
+	static constexpr float SPEED_SHAKE = 30.0f;
+
 	// カメラの初期座標
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };
 
@@ -38,6 +45,7 @@ public:
 		FREE,			// フリーモード
 		FOLLOW,			// 追従モード
 		FOLLOW_SPRING,	// ばね
+		SHAKE // カメラ揺らし
 	};
 
 	Camera(void);
@@ -50,6 +58,7 @@ public:
 	void SetBeforeDrawFree(void);
 	void SetBeforeDrawFollow(void);
 	void SetBeforeDrawFollowSprnig(void);
+	void SetBeforeDrawShake(void);
 	void Draw(void);
 	void Release(void);
 
@@ -60,6 +69,9 @@ public:
 
 	// カメラモードの変更
 	void ChangeMode(MODE mode);
+
+	// カメラモードの取得
+	MODE GetMode(void);
 
 private:
 
@@ -86,6 +98,11 @@ private:
 
 	// 追従対象
 	const Transform* followTransform_;
+	
+	// 画面揺らし用
+	float stepShake_;
+	VECTOR defaultPos_;
+	VECTOR shakeDir_;
 
 };
 

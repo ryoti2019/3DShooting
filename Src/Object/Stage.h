@@ -18,6 +18,12 @@ public:
 	void Draw(void);
 	void Release(void);
 
+	// ステージの取得
+	int GetModelIdStage(void);
+
+	// ボスの取得
+	Transform GetBossTransform(void);
+
 private:
 
 	// ステージ

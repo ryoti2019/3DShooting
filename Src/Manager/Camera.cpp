@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
@@ -46,6 +47,9 @@ void Camera::SetBeforeDraw(void)
 	case Camera::MODE::FOLLOW_SPRING:
 		SetBeforeDrawFollowSprnig();
 		break;
+	case Camera::MODE::SHAKE:
+		SetBeforeDrawShake();
+		break;
 	}
 
 	// カメラの設定(位置と注視点による制御)
@@ -54,6 +58,9 @@ void Camera::SetBeforeDraw(void)
 		targetPos_, 
 		cameraUp_
 	);
+
+	// DXライブラリのカメラとEffekseerのカメラを同期する
+	Effekseer_Sync3DSetting();
 
 }
 
@@ -176,7 +183,7 @@ void Camera::SetBeforeDrawFollow(void)
 void Camera::SetBeforeDrawFollowSprnig(void)
 {
 
-	// 次回、ばね付きの実装
+	// ばね付きの実装
 	float POW_SPRING = 24.0f;
 	float dampening = 2.0f * sqrt(POW_SPRING);
 
@@ -222,6 +229,41 @@ void Camera::SetBeforeDrawFollowSprnig(void)
 
 }
 
+void Camera::SetBeforeDrawShake(void)
+{
+
+	// 一定時間カメラを揺らす
+	stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
+	if (stepShake_ < 0.0f)
+	{
+
+		pos_ = defaultPos_;
+		ChangeMode(MODE::FIXED_POINT);
+		return;
+
+	}
+
+	// -1.0f～1.0f
+	float f = sinf(stepShake_ * SPEED_SHAKE);
+	// -1000.0f～1000.0f
+	f *= 1000.0f;
+	// -1000 or 1000
+	int d = static_cast<int>(f);
+	// 0 or 1
+	int shake = d % 2;
+	// -1 or 1
+	shake -= 1;
+	// 移動量
+	VECTOR velocity = VScale(shakeDir_, shake * WIDTH_SHAKE);
+	// 移動先座標
+	pos_ = VAdd(defaultPos_, velocity);
+	//float pow = WIDTH_SHAKE * sinf(stepShake_ * SPEED_SHAKE);
+	//VECTOR velocity = VScale(shakeDir_, pow);
+	//VECTOR newPos = VAdd(defaultPos_, velocity);
+	//pos_ = newPos;
+
+}
+
 void Camera::SetFollow(const Transform* follow)
 {
 
@@ -249,8 +291,17 @@ void Camera::ChangeMode(MODE mode)
 		break;
 	case Camera::MODE::FOLLOW_SPRING:
 		break;
+	case Camera::MODE::SHAKE:
+		stepShake_ = TIME_SHAKE;
+		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
+		defaultPos_ = pos_;
 	}
 
+}
+
+Camera::MODE Camera::GetMode(void)
+{
+	return mode_;
 }
 
 void Camera::SetDefault(void)

@@ -1,20 +1,21 @@
 #pragma once
+#include <vector>
 #include "SceneBase.h"
-#include "../Object/Common/Transform.h"
+class RockManager;
 class SpaceDome;
+class PlayerShip;
 class BossShip;
-class ShotEvent;
 
-class EventScene : public SceneBase
+class BattleScene : public SceneBase
 {
 
 public:
 
 	// コンストラクタ
-	EventScene(void);
+	BattleScene(void);
 
 	// デストラクタ
-	~EventScene(void);
+	~BattleScene(void);
 
 	void Init(void) override;
 	void Update(void) override;
@@ -23,16 +24,17 @@ public:
 
 private:
 
-	// スカイドーム用
-	Transform spaceDomeTran_;
+	// 背景岩
+	RockManager* rockManager_;
 
 	// スカイドーム
 	SpaceDome* spaceDome_;
 
-	// ボス
-	BossShip* bossShip_;
+	// 自機
+	PlayerShip* playerShip_;
 
-	// イベント用
-	ShotEvent* shotEvent_;
+	// ボス戦艦
+	BossShip * bossShip_;
+
 };
 

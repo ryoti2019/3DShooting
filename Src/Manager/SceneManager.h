@@ -15,6 +15,7 @@ public:
 		TITLE,
 		GAME,
 		EVENT,
+		BATTLE,
 	};
 
 	// インスタンスの生成

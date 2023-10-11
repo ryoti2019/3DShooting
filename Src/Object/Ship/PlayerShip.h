@@ -1,5 +1,5 @@
 #pragma once
-#include "Common/Transform.h"
+#include "../Common/Transform.h"
 class GameScene;
 
 class PlayerShip
@@ -27,7 +27,10 @@ public:
 	static constexpr VECTOR LOCAL_POS_R = { 5.0f, 0.0f, -20.0f };
 
 	// 追従対象からエフェクトまでの相対座標(完全追従)
-	static constexpr VECTOR LOCAL_BOOST_POS = { 0.0f, 0.0f, -500.0f };
+	static constexpr VECTOR LOCAL_BOOST_POS = { 0.0f, 0.0f, 500.0f };
+
+	// 追従対象からエフェクトまでの相対座標(完全追従)
+	static constexpr VECTOR LOCAL_DESTROY_POS = { 0.0f, 0.0f, -50.0f };
 
 	// 衝突判定：球体半径
 	static constexpr float COLLISION_RADIUS = 20.0f;

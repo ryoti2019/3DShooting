@@ -1,10 +1,10 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
-#include "../Manager/ResourceManager.h"
-#include "../Manager/InputManager.h"
-#include "../Manager/SceneManager.h"
-#include "../Scene/GameScene.h"
-#include "../Utility/AsoUtility.h"
+#include "../../Manager/ResourceManager.h"
+#include "../../Manager/InputManager.h"
+#include "../../Manager/SceneManager.h"
+#include "../../Scene/GameScene.h"
+#include "../../Utility/AsoUtility.h"
 #include "PlayerShip.h"
 
 PlayerShip::PlayerShip(void)
@@ -173,7 +173,7 @@ void PlayerShip::SyncBoostEffect(void)
 	VECTOR rot = Quaternion::ToEuler(followRot);
 
 	// 追従対象から自機までの相対座標
-	VECTOR effectPos = followRot.PosAxis(LOCAL_POS_L);
+	VECTOR effectPos = followRot.PosAxis(LOCAL_BOOST_POS);
 
 	// エフェクトの位置の更新
 	effectBoostPos_ = VAdd(followPos, effectPos);
@@ -258,7 +258,7 @@ void PlayerShip::SyncDestroyEffect(void)
 	VECTOR rot = Quaternion::ToEuler(followRot);
 
 	// 追従対象から自機までの相対座標
-	VECTOR effectPos = followRot.PosAxis(LOCAL_POS_L);
+	VECTOR effectPos = followRot.PosAxis(LOCAL_DESTROY_POS);
 
 	// エフェクトの位置の更新
 	effectDestroyPos_ = VAdd(followPos, effectPos);

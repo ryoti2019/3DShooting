@@ -5,7 +5,7 @@
 #include "../Object/RockManager.h"
 #include "../Object/Grid.h"
 #include "../Object/SpaceDome.h"
-#include "../Object/PlayerShip.h"
+#include "../Object/Ship/PlayerShip.h"
 #include "../Object/Stage.h"
 #include "GameScene.h"
 
@@ -118,6 +118,8 @@ void GameScene::Release(void)
 	delete stage_;
 
 }
+
+
 
 void GameScene::Collision(void)
 {

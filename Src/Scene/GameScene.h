@@ -29,9 +29,6 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-	// 自機破壊時間演出時間の取得
-	float GetStepShipDestroy(void);
-
 private:
 
 	// スカイドーム

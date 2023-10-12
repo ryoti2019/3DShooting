@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common/Transform.h"
 class GameScene;
+class ShotPlayer;
 
 class PlayerShip
 {
@@ -35,6 +36,9 @@ public:
 	// 衝突判定：球体半径
 	static constexpr float COLLISION_RADIUS = 20.0f;
 
+	// 弾の発射間隔
+	static constexpr float TIME_DELAY_SHOT = 0.2f;
+
 	// 状態
 	enum class STATE
 	{
@@ -63,6 +67,9 @@ public:
 	// プレイヤーのTransformの取得
 	const Transform& GetTransform(void) const;
 
+	// 弾
+	std::vector<ShotPlayer*>& GetShots(void);
+
 private:
 
 	// モデル制御の基本情報
@@ -73,6 +80,13 @@ private:
 
 	// ゲームシーン
 	GameScene* gameScene_;
+
+	// 弾
+	std::vector<ShotPlayer*> shots_;
+
+	// 弾の発射間隔
+	float deleyShot_;
+
 
 	// 噴射エフェクト
 	int effectJetResId_;
@@ -132,6 +146,12 @@ private:
 	// 状態別更新ステップ
 	void UpdateRun(void);
 	void UpdateDestroy(void);
+
+	// 操作：弾発射
+	void ProcessShot(void);
+
+	// 自機の弾を発射
+	void CreateShot(void);
 
 };
 

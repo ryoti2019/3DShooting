@@ -130,6 +130,11 @@ VECTOR ShotBase::GetPos(void) const
 	return transform_.pos;
 }
 
+void ShotBase::SetPos(VECTOR pos)
+{
+	transform_.pos = pos;
+}
+
 float ShotBase::GetSpeed(void) const
 {
 	return speed_;
@@ -150,8 +155,10 @@ void ShotBase::SetParam(void)
 
 	// ’e‚Ì‘¬“x
 	speed_ = 35.0f;
+
 	// ¶‘¶ŠÔ
 	timeAlive_ = 5.0f;
+
 	// Õ“Ë—p‹…‘Ì”¼Œa
 	collisionRadius_ = 10.0f;
 

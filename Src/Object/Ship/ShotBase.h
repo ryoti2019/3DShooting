@@ -41,6 +41,9 @@ public:
 	// À•W‚Ìæ“¾
 	VECTOR GetPos(void) const;
 
+	// À•W‚Ìİ’è
+	void SetPos(VECTOR pos);
+
 	// ’e‚Ì‘¬“x
 	float GetSpeed(void) const;
 

@@ -5,6 +5,7 @@
 #include "../../Manager/SceneManager.h"
 #include "../../Scene/GameScene.h"
 #include "../../Utility/AsoUtility.h"
+#include "../../Object/ShotPlayer.h"
 #include "PlayerShip.h"
 
 PlayerShip::PlayerShip(void)
@@ -88,6 +89,10 @@ void PlayerShip::Update(void)
 		break;
 	}
 
+	for (auto v : shots_)
+	{
+		v->Update();
+	}
 }
 
 void PlayerShip::Draw(void)
@@ -105,6 +110,10 @@ void PlayerShip::Draw(void)
 		break;
 	}
 
+	for (auto v : shots_)
+	{
+		v->Draw();
+	}
 }
 
 void PlayerShip::Destroy(void)
@@ -130,6 +139,11 @@ void PlayerShip::Release(void)
 const Transform& PlayerShip::GetTransform(void) const
 {
 	return transform_;
+}
+
+std::vector<ShotPlayer*>& PlayerShip::GetShots(void)
+{
+	return shots_;
 }
 
 void PlayerShip::ProcessBoost(void)
@@ -360,6 +374,7 @@ void PlayerShip::UpdateRun(void)
 	// エフェクト制御
 	SyncJetEffect();
 
+	ProcessShot();
 }
 
 void PlayerShip::UpdateDestroy(void)
@@ -393,6 +408,47 @@ void PlayerShip::UpdateDestroy(void)
 	if (isEffect_ == true)
 	{
 		StopEffekseer3DEffect(effectDestroyPlayId_);
+	}
+
+}
+
+void PlayerShip::ProcessShot(void)
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_N))
+	{
+		CreateShot();
+	}
+
+}
+
+void PlayerShip::CreateShot(void)
+{
+	// 弾の生成フラグ
+	bool isCreate = false;
+
+	for (auto v : shots_)
+	{
+		if (v->GetState() == ShotPlayer::STATE::END)
+		{
+			// 以前に生成したインスタンスを使い回し
+			v->Create(transform_.pos, transform_.GetForward());
+			isCreate = true;
+			break;
+		}
+	}
+	if (!isCreate)
+	{
+		// 自機の前方方向
+		auto dir = transform_.GetForward();
+		// 新しいインスタンスを生成
+		ShotPlayer* newShot = new ShotPlayer();
+		newShot->Create(transform_.pos, transform_.GetForward());
+
+		// 弾の管理配列に追加
+		shots_.push_back(newShot);
 	}
 
 }

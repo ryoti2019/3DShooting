@@ -46,6 +46,10 @@ void BossShip::Init(void)
 		ChangeState(STATE::EVENT);
 		break;
 	case SceneManager::SCENE_ID::BATTLE:
+		// 当たり判定(コライダ)作成
+		//int ret = MV1SetupCollInfo(transform_.modelId, -1, 1, 1, 1);
+		// ×処理が遅い ↑↑↑
+		MV1RefreshCollInfo(transform_.modelId, -1);
 		ChangeState(STATE::BATTLE);
 		break;
 	}
@@ -72,6 +76,10 @@ void BossShip::Update(void)
 	case BossShip::STATE::BATTLE:
 		Rotation();
 		MoveForward();
+		// 当たり判定(コライダ)作成
+		//int ret = MV1SetupCollInfo(transform_.modelId, -1, 1, 1, 1);
+		// ×処理が遅い ↑↑↑
+		MV1RefreshCollInfo(transform_.modelId, -1);
 		break;
 	case BossShip::STATE::DESTROY:
 		break;
@@ -100,6 +108,11 @@ bool BossShip::IsAlive(void) const
 	return state_ == STATE::BATTLE;
 }
 
+int BossShip::GetModelIdBossShip(void)
+{
+	return transform_.modelId;
+}
+
 void BossShip::ChangeState(STATE state)
 {
 	state_ = state;
@@ -108,6 +121,7 @@ void BossShip::ChangeState(STATE state)
 void BossShip::MoveForward(void)
 {
 
+	// 敵の前方向を取得
 	VECTOR forward = transform_.GetForward();
 
 	// 移動
@@ -117,4 +131,15 @@ void BossShip::MoveForward(void)
 
 void BossShip::Rotation(void)
 {
+	// 引数で指定された回転量・軸分、回転を加える
+
+	// ①デグリーをラジアンに変換する
+	float rad = AsoUtility::Deg2RadF(ROT_POW_DEG * SceneManager::GetInstance().GetDeltaTime());
+
+	// ②ラジアンをクォータニオンに変換
+	// (とある関数で、回転量RADと回転軸を使用)
+	Quaternion rotPow = Quaternion::AngleAxis(rad, AsoUtility::AXIS_Y);
+
+	// ③今回作成した回転量を、自機の回転量に加える(合成する)
+	transform_.quaRot = transform_.quaRot.Mult(rotPow);
 }

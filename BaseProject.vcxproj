@@ -38,6 +38,7 @@
     <ClCompile Include="Src\Object\Rock.cpp" />
     <ClCompile Include="Src\Object\Ship\ShotBase.cpp" />
     <ClCompile Include="Src\Object\Ship\ShotEvent.cpp" />
+    <ClCompile Include="Src\Object\ShotPlayer.cpp" />
     <ClCompile Include="Src\Object\SpaceDome.cpp" />
     <ClCompile Include="Src\Object\Stage.cpp" />
     <ClCompile Include="Src\Scene\BattleScene.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Src\Object\Rock.h" />
     <ClInclude Include="Src\Object\Ship\ShotBase.h" />
     <ClInclude Include="Src\Object\Ship\ShotEvent.h" />
+    <ClInclude Include="Src\Object\ShotPlayer.h" />
     <ClInclude Include="Src\Object\SpaceDome.h" />
     <ClInclude Include="Src\Object\Stage.h" />
     <ClInclude Include="Src\Scene\BattleScene.h" />

@@ -8,7 +8,7 @@ class BossShip
 public:
 
 	// 移動スピード
-	static constexpr float SPEED_MOVE = 4.0f;
+	static constexpr float SPEED_MOVE = 2.0f;
 
 	// 旋回スピード
 	static constexpr float ROT_POW_DEG = 3.0f;
@@ -39,6 +39,9 @@ public:
 	// 生存判定
 	bool IsAlive(void) const;
 
+	// ステージの取得
+	int GetModelIdBossShip(void);
+
 private:
 
 	// モデル制御の基本情報
@@ -47,6 +50,9 @@ private:
 	// 状態
 	STATE state_;
 	
+	// Y軸
+	Quaternion qua_;
+
 	// 状態遷移
 	void ChangeState(STATE state);
 

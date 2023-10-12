@@ -34,14 +34,19 @@ void BattleScene::Init(void)
 	// 背景(スカイドーム)
 	spaceDome_ = new SpaceDome(trans);
 	spaceDome_->Init();
+
 	// カメラを追従モードにする
 	manager.GetCamera()->SetFollow(&trans);
 	manager.GetCamera()->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 	rockManager_ = new RockManager(trans);
 	rockManager_->Init();
+
 	// ボス
 	bossShip_ = new BossShip();
 	bossShip_->Init();
+
+	// 自機の破壊演出時間
+	stepShipDestroy_ = 0.0f;
 
 }
 
@@ -53,11 +58,15 @@ void BattleScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+
 	bossShip_->Update();
 	playerShip_->Update();
 	rockManager_->Update();
 	spaceDome_->Update();
 
+	// 衝突判定
+
+	Collision();
 }
 
 void BattleScene::Draw(void)
@@ -83,4 +92,37 @@ void BattleScene::Release(void)
 	rockManager_->Release();
 	delete rockManager_;
 
+}
+
+void BattleScene::Collision(void)
+{
+	SceneManager& sceneIns = SceneManager::GetInstance();
+	// 自機とボスの当たり判定
+	if (playerShip_->IsDestroy())
+	{
+
+		stepShipDestroy_ += sceneIns.GetDeltaTime();
+		if (stepShipDestroy_ > TIME_RESTART)
+		{
+
+			// バトルリスタート
+			sceneIns.ChangeScene(SceneManager::SCENE_ID::BATTLE);
+
+		}
+
+	}
+	else
+	{
+
+		// ダンジョン(岩)
+		auto info = MV1CollCheck_Sphere(bossShip_->GetModelIdBossShip(), -1,
+			playerShip_->GetTransform().pos, PlayerShip::COLLISION_RADIUS);
+		if (info.HitNum >= 1)
+		{
+			playerShip_->Destroy();
+		}
+		// 当たり判定結果ポリゴン配列の後始末をする
+		MV1CollResultPolyDimTerminate(info);
+
+	}
 }

@@ -11,6 +11,9 @@ class BattleScene : public SceneBase
 
 public:
 
+	// 自機破壊時からのリスタート
+	static constexpr float TIME_RESTART = 2.0f;
+
 	// コンストラクタ
 	BattleScene(void);
 
@@ -35,6 +38,12 @@ private:
 
 	// ボス戦艦
 	BossShip * bossShip_;
+
+	// 自機の破壊演出時間
+	float stepShipDestroy_;
+
+	// 衝突判定
+	void Collision(void);
 
 };
 

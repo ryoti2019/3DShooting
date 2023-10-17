@@ -14,6 +14,8 @@ public:
 
 	ShotPlayer::STATE GetState(void);
 
+	void SetState(ShotPlayer::STATE state);
+
 protected:
 
 	// ƒpƒ‰ƒ[ƒ^İ’è

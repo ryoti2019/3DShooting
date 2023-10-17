@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Common\Fader.cpp" />
+    <ClCompile Include="Src\Common\IntVector3.cpp" />
+    <ClCompile Include="Src\Common\Quaternion.cpp" />
+    <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\Object\Ship\BossShip.cpp" />
     <ClCompile Include="Src\Object\RockManager.cpp" />
     <ClCompile Include="Src\Object\Ship\PlayerShip.cpp" />
-    <ClCompile Include="Src\Common\IntVector3.cpp" />
     <ClCompile Include="Src\Object\Common\Transform.cpp" />
     <ClCompile Include="Src\Application.cpp" />
-    <ClCompile Include="Src\Common\Fader.cpp" />
-    <ClCompile Include="Src\Common\Quaternion.cpp" />
-    <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera.cpp" />
     <ClCompile Include="Src\Manager\InputManager.cpp" />
@@ -41,6 +41,7 @@
     <ClCompile Include="Src\Object\ShotPlayer.cpp" />
     <ClCompile Include="Src\Object\SpaceDome.cpp" />
     <ClCompile Include="Src\Object\Stage.cpp" />
+    <ClCompile Include="Src\Object\Ship\Turret.cpp" />
     <ClCompile Include="Src\Scene\BattleScene.cpp" />
     <ClCompile Include="Src\Scene\EventScene.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
@@ -49,14 +50,14 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Common\Fader.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
+    <ClInclude Include="Src\Common\Quaternion.h" />
+    <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Object\Ship\BossShip.h" />
     <ClInclude Include="Src\Object\RockManager.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Application.h" />
-    <ClInclude Include="Src\Common\Fader.h" />
-    <ClInclude Include="Src\Common\Quaternion.h" />
-    <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\main.h" />
     <ClInclude Include="Src\Manager\Camera.h" />
     <ClInclude Include="Src\Manager\InputManager.h" />
@@ -71,6 +72,7 @@
     <ClInclude Include="Src\Object\ShotPlayer.h" />
     <ClInclude Include="Src\Object\SpaceDome.h" />
     <ClInclude Include="Src\Object\Stage.h" />
+    <ClInclude Include="Src\Object\Ship\Turret.h" />
     <ClInclude Include="Src\Scene\BattleScene.h" />
     <ClInclude Include="Src\Scene\EventScene.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />

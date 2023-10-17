@@ -13,6 +13,11 @@ ShotPlayer::STATE ShotPlayer::GetState(void)
 	return state_;
 }
 
+void ShotPlayer::SetState(ShotPlayer::STATE state)
+{
+	ChangeState(state);
+}
+
 void ShotPlayer::SetParam(void)
 {
 

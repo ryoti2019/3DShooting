@@ -46,6 +46,9 @@ void PlayerShip::Init(void)
 	// ‰Šúó‘Ô
 	ChangeState(STATE::RUN);
 
+	// ‹…‚Ì”­ËŠÔŠu
+	delayShot_ = 0.0f;
+
 }
 
 void PlayerShip::Update(void)
@@ -375,6 +378,7 @@ void PlayerShip::UpdateRun(void)
 	SyncJetEffect();
 
 	ProcessShot();
+
 }
 
 void PlayerShip::UpdateDestroy(void)
@@ -417,9 +421,16 @@ void PlayerShip::ProcessShot(void)
 
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_N))
+	delayShot_ -= SceneManager::GetInstance().GetDeltaTime();
+	if (delayShot_ <= 0.0f)
+	{
+		delayShot_ = 0.0f;
+	}
+
+	if (ins.IsTrgDown(KEY_INPUT_N) && delayShot_ == 0.0f)
 	{
 		CreateShot();
+		delayShot_ = TIME_DELAY_SHOT;
 	}
 
 }

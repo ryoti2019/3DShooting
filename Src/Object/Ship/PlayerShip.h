@@ -37,7 +37,7 @@ public:
 	static constexpr float COLLISION_RADIUS = 20.0f;
 
 	// 弾の発射間隔
-	static constexpr float TIME_DELAY_SHOT = 0.2f;
+	static constexpr float TIME_DELAY_SHOT = 1.0f;
 
 	// 状態
 	enum class STATE
@@ -85,8 +85,7 @@ private:
 	std::vector<ShotPlayer*> shots_;
 
 	// 弾の発射間隔
-	float deleyShot_;
-
+	float delayShot_;
 
 	// 噴射エフェクト
 	int effectJetResId_;

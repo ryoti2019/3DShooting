@@ -7,6 +7,7 @@
 #include "../Object/RockManager.h"
 #include "../Object/Ship/PlayerShip.h"
 #include "../Object/Ship/BossShip.h"
+#include "../Object/ShotPlayer.h"
 #include "BattleScene.h"
 
 BattleScene::BattleScene(void)
@@ -65,8 +66,8 @@ void BattleScene::Update(void)
 	spaceDome_->Update();
 
 	// 衝突判定
-
 	Collision();
+
 }
 
 void BattleScene::Draw(void)
@@ -96,24 +97,20 @@ void BattleScene::Release(void)
 
 void BattleScene::Collision(void)
 {
+
 	SceneManager& sceneIns = SceneManager::GetInstance();
 	// 自機とボスの当たり判定
 	if (playerShip_->IsDestroy())
 	{
-
 		stepShipDestroy_ += sceneIns.GetDeltaTime();
 		if (stepShipDestroy_ > TIME_RESTART)
 		{
-
 			// バトルリスタート
 			sceneIns.ChangeScene(SceneManager::SCENE_ID::BATTLE);
-
 		}
-
 	}
 	else
 	{
-
 		// ダンジョン(岩)
 		auto info = MV1CollCheck_Sphere(bossShip_->GetModelIdBossShip(), -1,
 			playerShip_->GetTransform().pos, PlayerShip::COLLISION_RADIUS);
@@ -123,6 +120,18 @@ void BattleScene::Collision(void)
 		}
 		// 当たり判定結果ポリゴン配列の後始末をする
 		MV1CollResultPolyDimTerminate(info);
+	}
 
+	// 自機の球とボスの当たり判定
+	for (auto v : playerShip_->GetShots())
+	{
+		auto info = MV1CollCheck_Sphere(bossShip_->GetModelIdBossShip(), -1,
+			v->GetPos(), v->GetCollisionRadius());
+		if (info.HitNum >= 1)
+		{
+			v->SetState(ShotBase::STATE::BLAST);
+		}
+		// 当たり判定結果ポリゴン配列の後始末をする
+		MV1CollResultPolyDimTerminate(info);
 	}
 }

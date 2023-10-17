@@ -1,6 +1,8 @@
 #pragma once
+#include <vector>
 #include "../Common/Transform.h"
 class GameScene;
+class Turret;
 
 class BossShip
 {
@@ -42,14 +44,20 @@ public:
 	// ステージの取得
 	int GetModelIdBossShip(void);
 
+	// タレット
+	const std::vector<Turret*>& GetTurrets(void) const;
+
 private:
+
+	// タレット
+	std::vector<Turret*> turrets_;
 
 	// モデル制御の基本情報
 	Transform transform_;
 
 	// 状態
 	STATE state_;
-	
+
 	// Y軸
 	Quaternion qua_;
 
@@ -62,6 +70,12 @@ private:
 	// 旋回
 	void Rotation(void);
 
+	// タレット
+	void UpdateTurret(void);
+	void DrawTurret(void);
+
+	// タレットの作成
+	void MakeTurret(VECTOR localPos, VECTOR localAddAxis);
 };
 
 

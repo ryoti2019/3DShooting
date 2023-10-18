@@ -10,6 +10,20 @@ public:
 	// ƒ^ƒŒƒbƒg‚Ì‘å‚«‚³
 	static constexpr float SCALE = 80.0f;
 
+	// –C‘ä‰ñ“]“®ì§ŒÀŠp(deg)
+	static constexpr float ANGLE_Y_MIN_STAND = -30.0f;
+	static constexpr float ANGLE_Y_MAX_STAND = 30.0f;
+
+	// –C‘ä‚Ì‰ñ“]—Ê(deg)
+	static constexpr float ROT_POW_STAND = 0.2f;
+
+	// –Cg‰ñ“]“®ì§ŒÀŠp(deg)
+	static constexpr float ANGLE_X_MIN_GUN = -10.0f;
+	static constexpr float ANGLE_X_MAX_GUN = 20.0f;
+	
+	// –Cg‚Ì‰ñ“]—Ê(deg)
+	static constexpr float ROT_POW_GUN = 0.2f;
+
 	// ó‘Ô
 	enum class STATE
 	{
@@ -53,6 +67,21 @@ private:
 	// ‘Ï‹v—Í
 	int hp_;
 
+	// –C‘ä‚Ì‰ñ“]—Ê(deg)
+	float rotPowStand_;
+
+	// –Cg‚Ì‰ñ“]—Ê(deg)
+	float rotPowBarrel_;
+
+	// –C‘ä‚Ì‰ñ“]“®ì’~Ï—p
+	VECTOR localRotAddStand_;
+
+	VECTOR localRotAddBarrel_;
+
+	bool isStand_;
+
+	bool isBarrel_;
+
 	// ó‘Ô‘JˆÚ
 	void ChangeState(STATE state);
 
@@ -62,7 +91,7 @@ private:
 	void DrawDestroy(void);
 
 	// e(íŠÍ)‚Æ‚Ì‰ñ“]‚ÆˆÊ’u‚Ì“¯Šú
-	void SyncParent(Transform& transform);
+	void SyncParent(Transform& transform, VECTOR addAxis);
 
 };
 

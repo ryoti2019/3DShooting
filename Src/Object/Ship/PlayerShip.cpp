@@ -88,6 +88,7 @@ void PlayerShip::Update(void)
 		UpdateRun();
 		break;
 	case PlayerShip::STATE::DESTROY:
+		isEffect_ = true;
 		UpdateDestroy();
 		break;
 	}
@@ -396,20 +397,20 @@ void PlayerShip::UpdateDestroy(void)
 		// エフェクトの位置
 		SyncDestroyEffect();
 
-		effectTime_ = 3.0f;
+		effectTime_ = 2.0f;
 	}
 
-	if (effectTime_ >= 1.0f)
+	if (effectTime_ > 0.0f)
 	{
 		effectTime_ -= SceneManager::GetInstance().GetDeltaTime();
 	}
 
-	if (effectTime_ <= 1.0f)
+	if (effectTime_ < 0.0f)
 	{
-		isEffect_ = true;
+		isEffect_ = false;
 	}
 
-	if (isEffect_ == true)
+	if (!isEffect_)
 	{
 		StopEffekseer3DEffect(effectDestroyPlayId_);
 	}

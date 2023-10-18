@@ -28,6 +28,19 @@ Turret::Turret(const Transform& transformParent,
 	// UŒ‚‚ğ‰Šúó‘Ô‚É‚·‚é
 	ChangeState(STATE::ATTACK);
 
+	// –C‘äƒ[ƒJƒ‹‰ñ“]
+	localRotAddStand_ = { 0.0f, 0.0f, 0.0f };
+
+	// –Cgƒ[ƒJƒ‹‰ñ“]
+	localRotAddBarrel_ = { 0.0f, 0.0f, 0.0f };
+
+	// UŒ‚‚ğ‰Šúó‘Ô‚É‚·‚é
+	ChangeState(STATE::ATTACK);
+
+	isStand_ = false;
+
+	isBarrel_ = false;
+
 }
 
 Turret::~Turret(void)
@@ -41,11 +54,15 @@ void Turret::Init(void)
 	hp_ = 2;
 
 #pragma region –C‘ä‚Ìİ’è
+
 	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ
 	transformStand_.scl = { SCALE, SCALE, SCALE };
 
 	// ‰ñ“]‚È‚µ
 	transformStand_.quaRot = Quaternion();
+
+	// –C‘ä‚Ì‰ñ“]—Ê(deg)
+	rotPowStand_ = ROT_POW_STAND;
 
 	// ƒ[ƒJƒ‹‰ñ“](³–Ê‚ğZ‚Ì³•ûŒü‚É‡‚í‚¹‚é)
 	transformStand_.quaRotLocal = Quaternion::Euler(
@@ -55,15 +72,20 @@ void Turret::Init(void)
 	);
 
 	// eƒ‚ƒfƒ‹‚Æ“¯Šú
-	SyncParent(transformStand_);
+	SyncParent(transformStand_,{ 0.0f, 0.0f, 0.0f });
 
 #pragma endregion
+
 #pragma region –Cg‚Ìİ’è
+
 	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ
 	transformBarrel_.scl = { SCALE, SCALE, SCALE };
 
 	// ‰ñ“]‚È‚µ
 	transformBarrel_.quaRot = Quaternion();
+
+	// –Cg‚Ì‰ñ“]—Ê(deg)
+	rotPowBarrel_ = ROT_POW_GUN;
 
 	// ƒ[ƒJƒ‹‰ñ“](³–Ê‚ğZ‚Ì³•ûŒü‚É‡‚í‚¹‚é)
 	transformBarrel_.quaRotLocal = Quaternion::Euler(
@@ -73,8 +95,10 @@ void Turret::Init(void)
 	);
 
 	// eƒ‚ƒfƒ‹‚Æ“¯Šú
-	SyncParent(transformBarrel_);
+	SyncParent(transformBarrel_,{ 0.0f, 0.0f, 0.0f });
+
 #pragma endregion
+
 }
 
 void Turret::Update(void)
@@ -97,11 +121,82 @@ void Turret::Update(void)
 void Turret::UpdateAttack(void)
 {
 
-	// –C‘ä‚Ì‰ñ“]‚ÆˆÊ’u‚ğ’²®
-	SyncParent(transformStand_);
+	auto deltaTime = SceneManager::GetInstance().GetDeltaTime();
+	float standDeg;
 
-	// –Cg‚Ì‰ñ“]‚ÆˆÊ’u‚ğ’²®
-	SyncParent(transformBarrel_);
+#pragma region –C‘ä‚Ì‰ñ“]“®ì
+
+	if (isStand_)
+	{
+		// –C‘ä‚Ì‰Ò“­‰ñ“]
+		localRotAddStand_.y += (rotPowStand_ * deltaTime) ;
+	}
+	else
+	{
+		// –C‘ä‚Ì‰Ò“­‰ñ“]
+		localRotAddStand_.y += (rotPowStand_ * deltaTime)* -1.0f;
+	}
+
+	standDeg = AsoUtility::Rad2DegF(localRotAddStand_.y);
+	//¦©•ª‚Ål‚¦‚ÄÀ‘•‚µ‚Ä‚İ‚Ü‚µ‚å‚¤
+	//‰ñ“]‚ğ”½“] = —Í‚ğ”½“]‚·‚é‚É‚ÍA - 1.0f‚ÅŠ|‚¯Z‚ğ‚·‚é‚Æ—Ç‚¢‚Å‚µ‚å‚¤
+
+	if (ANGLE_Y_MAX_STAND < standDeg)
+	{
+		isStand_ = false;
+	}
+	else if (ANGLE_Y_MIN_STAND > standDeg)
+	{
+		isStand_ = true;
+	}
+
+	// –C‘ä‚Ì‰ñ“]‚ÆˆÊ’u‚ğ’²®(‰Ò“­•ª‚Ì‰ñ“]‚ğ‰Á‚¦‚é)
+	SyncParent(transformStand_, localRotAddStand_);
+
+#pragma endregion
+
+	float barrelDeg;
+
+#pragma region –Cg‚Ì‰ñ“]“®ì
+
+	if (isBarrel_)
+	{
+		// –C‘ä‚Ì‰Ò“­‰ñ“]
+		localRotAddBarrel_.x += (rotPowBarrel_ * deltaTime);
+	}
+	else
+	{
+		// –C‘ä‚Ì‰Ò“­‰ñ“]
+		localRotAddBarrel_.x += (rotPowBarrel_ * deltaTime) * -1.0f;
+	}
+
+	// –Cg‚Ì‰Ò“­‰ñ“]
+	barrelDeg = AsoUtility::Rad2DegF(localRotAddBarrel_.x);
+	//¦©•ª‚Ål‚¦‚ÄÀ‘•‚µ‚Ä‚İ‚Ü‚µ‚å‚¤
+	//‰ñ“]‚ğ”½“] = —Í‚ğ”½“]‚·‚é‚É‚ÍA - 1.0f‚ÅŠ|‚¯Z‚ğ‚·‚é‚Æ—Ç‚¢‚Å‚µ‚å‚¤
+
+	if (ANGLE_X_MAX_GUN < barrelDeg)
+	{
+		isBarrel_ = false;
+	}
+	else if (ANGLE_X_MIN_GUN > barrelDeg)
+	{
+		isBarrel_ = true;
+	}
+
+
+	// –Cg‚Ì‰ñ“]‚ÆˆÊ’u‚ğ’²®(‰Ò“­•ª‚Ì‰ñ“]‚ğ‰Á‚¦‚é)
+	//SyncParent(transformBarrel_, localRotAddBarrel_);
+
+#pragma endregion
+
+	// –C‘ä‚ª‰ñ“]‚µ‚½•ª–Cg‚à‰ñ“]‚·‚é•K—v‚ª‚ ‚é‚Ì‚Å‚»‚Ì‰ñ“]‚ğì‚é
+	Quaternion stand = Quaternion::Euler(localRotAddStand_);
+	Quaternion gun = Quaternion::Euler(localRotAddBarrel_);
+	Quaternion mix = stand.Mult(gun);
+
+	// –C‘ä‚Ì‰ñ“]‚ÆˆÊ’u‚ğ’²®(‰Ò“­•ª‚Ì‰ñ“]‚ğ‰Á‚¦‚é)
+	SyncParent(transformBarrel_, mix.ToEuler());
 
 }
 
@@ -139,16 +234,49 @@ void Turret::DrawDestroy(void)
 {
 }
 
-void Turret::Release(void)
+void Turret::SyncParent(Transform& transform, VECTOR addAxis)
 {
+
+	// e(íŠÍ)‚Ì‰ñ“]î•ñ‚ğæ“¾
+	Quaternion parentRot = transformParent_.quaRot;
+
+#pragma region •â‘«
+	// –C‘ä‚Ìƒ[ƒJƒ‹‰ñ“]
+	// Unity Z¨X¨Y = Y * X * Z
+	//axis = Quaternion::AngleAxis(localRotAdd_.y, AsoUtility::AXIS_Y);
+	//localRot = localRot.Mult(axis);
+
+	//axis = Quaternion::AngleAxis(localRotAdd_.x, AsoUtility::AXIS_X);
+	//localRot = localRot.Mult(axis);
+
+	//axis = Quaternion::AngleAxis(localRotAdd_.z, AsoUtility::AXIS_Z);
+	//localRot = localRot.Mult(axis);
+
+#pragma endregion
+
+	// e(íŠÍ)‰ñ“]‚©‚ç‚Ì‘Š‘Î‰ñ“]
+	Quaternion rot = Quaternion::Identity();
+	rot = rot.Mult(Quaternion::Euler(localRot_));
+
+	// ‰Ò“­•ª‚Ì‰ñ“]‚ğ‰Á‚¦‚é
+	rot = rot.Mult(Quaternion::Euler(addAxis));
+
+	// e(íŠÍ)‚Ì‰ñ“]‚Æ‘Š‘Î‰ñ“]‚ğ‡¬
+	transform.quaRot = parentRot.Mult(rot);
+
+	// e(íŠÍ)‚Æ‚Ì‘Š‘ÎÀ•W‚ğAe(íŠÍ)‚Ì‰ñ“]î•ñ‚É‡‚í‚¹‚Ä‰ñ“]
+	VECTOR localRotPos = Quaternion::PosAxis(parentRot, localPos_);
+
+	// ‘Š‘ÎÀ•W‚ğƒ[ƒ‹ƒhÀ•W‚É’¼‚·
+	transform.pos = VAdd(transformParent_.pos, VScale(localRotPos, SCALE));
+
+	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñXV
+	transform.Update();
+
 }
 
-void Turret::SyncParent(Transform& transform)
+void Turret::Release(void)
 {
-	// ˆÊ’u
-	transform.pos = VAdd(transformParent_.pos, VScale(localPos_, SCALE));
-		// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñXV
-		transform.Update();
 }
 
 void Turret::ChangeState(STATE state)

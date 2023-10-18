@@ -111,7 +111,7 @@ void BattleScene::Collision(void)
 	}
 	else
 	{
-		// ダンジョン(岩)
+		// ボスと自機との当たり判定
 		auto info = MV1CollCheck_Sphere(bossShip_->GetModelIdBossShip(), -1,
 			playerShip_->GetTransform().pos, PlayerShip::COLLISION_RADIUS);
 		if (info.HitNum >= 1)

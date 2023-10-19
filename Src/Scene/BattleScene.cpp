@@ -3,10 +3,13 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
+#include "../Utility/AsoUtility.h"
 #include "../Object/SpaceDome.h"
 #include "../Object/RockManager.h"
 #include "../Object/Ship/PlayerShip.h"
 #include "../Object/Ship/BossShip.h"
+#include "../Object/Ship/Turret.h"
+#include "../Object/Ship/ShotTurret.h"
 #include "../Object/ShotPlayer.h"
 #include "BattleScene.h"
 
@@ -134,4 +137,30 @@ void BattleScene::Collision(void)
 		// 当たり判定結果ポリゴン配列の後始末をする
 		MV1CollResultPolyDimTerminate(info);
 	}
+
+	// ボスの球と自機の当たり判定
+	for (auto turret : bossShip_->GetTurrets())
+	{
+		for (auto v : turret->GetShots())
+		{
+			auto info = AsoUtility::IsHitSpheres(playerShip_->GetTransform().pos, playerShip_->COLLISION_RADIUS,
+				v->GetPos(), v->GetCollisionRadius());
+			if (info)
+			{
+				playerShip_->Destroy();
+			}
+		}
+	}
+
+	// 自機の球とタレットの当たり判定
+	for (auto turret : bossShip_->GetTurrets())
+	{
+		auto info = AsoUtility::IsHitSpheres(playerShip_->GetTransform().pos, playerShip_->COLLISION_RADIUS,
+			turret->GetTransformBarrel().pos,turret->COLLISION_RADIUS);
+		if (info)
+		{
+			turret->SetState(Turret::STATE::DESTROY);
+		}
+	}
+
 }

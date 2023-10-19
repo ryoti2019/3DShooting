@@ -70,6 +70,9 @@ public:
 	// 弾
 	std::vector<ShotPlayer*>& GetShots(void);
 
+	// ステージの取得
+	int GetModelIdPlayerShip(void);
+
 private:
 
 	// モデル制御の基本情報

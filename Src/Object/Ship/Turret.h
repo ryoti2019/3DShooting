@@ -2,6 +2,8 @@
 #include <vector>
 #include "../../Object/Common/Transform.h"
 
+class ShotTurret;
+
 class Turret
 {
 
@@ -24,12 +26,22 @@ public:
 	// 砲身の回転量(deg)
 	static constexpr float ROT_POW_GUN = 0.2f;
 
+	// 弾の発射間隔
+	static constexpr float TIME_DELAY_SHOT = 0.0f;
+
+	// 衝突判定：球体半径
+	static constexpr float COLLISION_RADIUS = 200.0f;
+
+	// 破壊エフェクトの表示時間
+	static constexpr float TIME_DESTROY = 3.0f;
+
 	// 状態
 	enum class STATE
 	{
 		NONE,
 		ATTACK,
-		DESTROY
+		DESTROY,
+		END
 	};
 
 	// コンストラクタ
@@ -44,7 +56,18 @@ public:
 	void Draw(void);
 	void Release(void);
 
+	// 弾
+	std::vector<ShotTurret*>& GetShots(void);
+
+	// 砲身のTransformの取得
+	const Transform& GetTransformBarrel(void) const;
+
+	void SetState(Turret::STATE state);
+
 private:
+
+	// 弾
+	std::vector<ShotTurret*> shots_;
 
 	// モデル制御の基本情報
 	const Transform& transformParent_;
@@ -78,9 +101,20 @@ private:
 
 	VECTOR localRotAddBarrel_;
 
+	// 砲台のフラグ
 	bool isStand_;
 
+	// 砲身のフラグ
 	bool isBarrel_;
+
+	// 弾の発射間隔
+	float delayShot_;
+
+	// 自機破壊エフェクト
+	int effectDestroyResId_;
+	int effectDestroyPlayId_;
+
+	VECTOR effectDestroyPos_;
 
 	// 状態遷移
 	void ChangeState(STATE state);
@@ -92,6 +126,12 @@ private:
 
 	// 親(戦艦)との回転と位置の同期
 	void SyncParent(Transform& transform, VECTOR addAxis);
+
+	// 操作：弾発射
+	void ProcessShot(void);
+
+	// 自機の弾を発射
+	void CreateShot(void);
 
 };
 

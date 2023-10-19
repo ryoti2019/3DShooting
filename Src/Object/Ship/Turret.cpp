@@ -1,10 +1,13 @@
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "../../Application.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/Resource.h"
+#include "../../Manager/InputManager.h"
 #include "../../Common/Quaternion.h"
 #include "../../Utility/AsoUtility.h"
+#include "../../Object/Ship/ShotTurret.h"
 #include "../Common/Transform.h"
 #include "Turret.h"
 
@@ -33,9 +36,6 @@ Turret::Turret(const Transform& transformParent,
 
 	// 砲身ローカル回転
 	localRotAddBarrel_ = { 0.0f, 0.0f, 0.0f };
-
-	// 攻撃を初期状態にする
-	ChangeState(STATE::ATTACK);
 
 	isStand_ = false;
 
@@ -116,10 +116,17 @@ void Turret::Update(void)
 		break;
 	}
 
+	for (auto v : shots_)
+	{
+		v->Update();
+	}
+
 }
 
 void Turret::UpdateAttack(void)
 {
+
+	ProcessShot();
 
 	auto deltaTime = SceneManager::GetInstance().GetDeltaTime();
 	float standDeg;
@@ -202,6 +209,7 @@ void Turret::UpdateAttack(void)
 
 void Turret::UpdateDestroy(void)
 {
+	hp_ -= 1;
 }
 
 void Turret::Draw(void)
@@ -219,6 +227,11 @@ void Turret::Draw(void)
 		break;
 	}
 
+	for (auto v : shots_)
+	{
+		v->Draw();
+	}
+
 }
 
 void Turret::DrawAttack(void)
@@ -232,6 +245,38 @@ void Turret::DrawAttack(void)
 
 void Turret::DrawDestroy(void)
 {
+	if (hp_ <= 0)
+	{
+		// 爆破エフェクト
+		effectDestroyResId_ = ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::PLAYER_SHIP_EXPLOSION).handleId_;
+
+		// 大きさ
+		float SCALE = 5.0f;
+		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
+
+		// 追従対象(プレイヤー機)の位置
+		VECTOR followPos = transformBarrel_.pos;
+
+		// 追従対象の向き
+		Quaternion followRot = transformBarrel_.quaRot;
+
+		VECTOR rot = Quaternion::ToEuler(followRot);
+
+		// 追従対象から自機までの相対座標
+		VECTOR effectLPos = followRot.PosAxis({0.0f,0.0f,0.0f});
+		VECTOR effectRPos = followRot.PosAxis({0.0f,0.0f,0.0f});
+
+		// エフェクトの位置の更新
+		effectDestroyPos_ = VAdd(followPos, effectLPos);
+
+		// 位置の設定
+		// 左
+		SetPosPlayingEffekseer3DEffect(effectDestroyPlayId_, effectDestroyPos_.x, effectDestroyPos_.y, effectDestroyPos_.z);
+		SetRotationPlayingEffekseer3DEffect(effectDestroyPlayId_, rot.x, rot.y, rot.z);
+
+		transformBarrel_.Update();
+	}
 }
 
 void Turret::SyncParent(Transform& transform, VECTOR addAxis)
@@ -275,8 +320,68 @@ void Turret::SyncParent(Transform& transform, VECTOR addAxis)
 
 }
 
+void Turret::ProcessShot(void)
+{
+
+	auto& ins = InputManager::GetInstance();
+
+	delayShot_ -= SceneManager::GetInstance().GetDeltaTime();
+
+	if (delayShot_ <= 0.0f)
+	{
+		CreateShot();
+		delayShot_ = TIME_DELAY_SHOT;
+	}
+
+}
+
+void Turret::CreateShot(void)
+{
+
+	// 弾の生成フラグ
+	bool isCreate = false;
+
+	for (auto v : shots_)
+	{
+		if (v->GetState() == ShotTurret::STATE::END)
+		{
+			// 以前に生成したインスタンスを使い回し
+			v->Create(transformBarrel_.pos, transformBarrel_.GetForward());
+			isCreate = true;
+			break;
+		}
+	}
+	if (!isCreate)
+	{
+		// 自機の前方方向
+		auto dir = transformBarrel_.GetForward();
+		// 新しいインスタンスを生成
+ 		ShotTurret* newShot = new ShotTurret();
+		newShot->Create(transformBarrel_.pos, transformBarrel_.GetForward());
+
+		// 弾の管理配列に追加
+		shots_.push_back(newShot);
+	}
+
+}
+
 void Turret::Release(void)
 {
+}
+
+std::vector<ShotTurret*>& Turret::GetShots(void)
+{
+	return shots_;
+}
+
+const Transform& Turret::GetTransformBarrel(void) const
+{
+	return transformBarrel_;
+}
+
+void Turret::SetState(Turret::STATE state)
+{
+	ChangeState(state);
 }
 
 void Turret::ChangeState(STATE state)

@@ -150,6 +150,11 @@ std::vector<ShotPlayer*>& PlayerShip::GetShots(void)
 	return shots_;
 }
 
+int PlayerShip::GetModelIdPlayerShip(void)
+{
+	return transform_.modelId;
+}
+
 void PlayerShip::ProcessBoost(void)
 {
 
@@ -438,6 +443,7 @@ void PlayerShip::ProcessShot(void)
 
 void PlayerShip::CreateShot(void)
 {
+
 	// íeÇÃê∂ê¨ÉtÉâÉO
 	bool isCreate = false;
 

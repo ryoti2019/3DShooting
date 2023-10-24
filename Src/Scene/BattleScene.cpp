@@ -155,11 +155,15 @@ void BattleScene::Collision(void)
 	// 自機の球とタレットの当たり判定
 	for (auto turret : bossShip_->GetTurrets())
 	{
-		auto info = AsoUtility::IsHitSpheres(playerShip_->GetTransform().pos, playerShip_->COLLISION_RADIUS,
-			turret->GetTransformBarrel().pos,turret->COLLISION_RADIUS);
-		if (info)
+		for (auto v : playerShip_->GetShots())
 		{
-			turret->SetState(Turret::STATE::DESTROY);
+			auto info = AsoUtility::IsHitSpheres(v->GetPos(), v->GetCollisionRadius(),
+				turret->GetTransformBarrel().pos, turret->COLLISION_RADIUS);
+			if (info)
+			{
+				turret->SetHP(-1);
+				v->SetState(ShotPlayer::STATE::BLAST);
+			}
 		}
 	}
 

@@ -28,6 +28,10 @@ Turret::Turret(const Transform& transformParent,
 	transformBarrel_.SetModel(
 		ins.LoadModelDuplicate(ResourceManager::SRC::TURRET_GUN));
 
+	// 爆破エフェクト
+	effectDestroyResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::PLAYER_SHIP_EXPLOSION).handleId_;
+
 	// 攻撃を初期状態にする
 	ChangeState(STATE::ATTACK);
 
@@ -40,6 +44,10 @@ Turret::Turret(const Transform& transformParent,
 	isStand_ = false;
 
 	isBarrel_ = false;
+
+	effectTime_ = 0.0f;
+
+	isEffect_ = false;
 
 }
 
@@ -104,6 +112,11 @@ void Turret::Init(void)
 void Turret::Update(void)
 {
 
+	if (hp_ <= 0)
+	{
+		state_ = STATE::DESTROY;
+	}
+
 	switch (state_)
 	{
 	case Turret::STATE::NONE:
@@ -112,6 +125,7 @@ void Turret::Update(void)
 		UpdateAttack();
 		break;
 	case Turret::STATE::DESTROY:
+		isEffect_ = true;
 		UpdateDestroy();
 		break;
 	}
@@ -209,7 +223,38 @@ void Turret::UpdateAttack(void)
 
 void Turret::UpdateDestroy(void)
 {
-	hp_ -= 1;
+
+	if (effectTime_ <= 0.0f)
+	{
+		// エフェクト再生
+		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
+
+		// 大きさ
+		float SCALE = 10.0f;
+		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
+
+		// エフェクトの位置
+		SyncDestroyEffect();
+
+		effectTime_ = TIME_DESTROY;
+
+	}
+
+	if (effectTime_ > 0.0f)
+	{
+		effectTime_ -= SceneManager::GetInstance().GetDeltaTime();
+	}
+
+	if (effectTime_ < 0.0f)
+	{
+		isEffect_ = false;
+	}
+
+	if (!isEffect_)
+	{
+		StopEffekseer3DEffect(effectDestroyPlayId_);
+	}
+
 }
 
 void Turret::Draw(void)
@@ -245,38 +290,7 @@ void Turret::DrawAttack(void)
 
 void Turret::DrawDestroy(void)
 {
-	if (hp_ <= 0)
-	{
-		// 爆破エフェクト
-		effectDestroyResId_ = ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::PLAYER_SHIP_EXPLOSION).handleId_;
 
-		// 大きさ
-		float SCALE = 5.0f;
-		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
-
-		// 追従対象(プレイヤー機)の位置
-		VECTOR followPos = transformBarrel_.pos;
-
-		// 追従対象の向き
-		Quaternion followRot = transformBarrel_.quaRot;
-
-		VECTOR rot = Quaternion::ToEuler(followRot);
-
-		// 追従対象から自機までの相対座標
-		VECTOR effectLPos = followRot.PosAxis({0.0f,0.0f,0.0f});
-		VECTOR effectRPos = followRot.PosAxis({0.0f,0.0f,0.0f});
-
-		// エフェクトの位置の更新
-		effectDestroyPos_ = VAdd(followPos, effectLPos);
-
-		// 位置の設定
-		// 左
-		SetPosPlayingEffekseer3DEffect(effectDestroyPlayId_, effectDestroyPos_.x, effectDestroyPos_.y, effectDestroyPos_.z);
-		SetRotationPlayingEffekseer3DEffect(effectDestroyPlayId_, rot.x, rot.y, rot.z);
-
-		transformBarrel_.Update();
-	}
 }
 
 void Turret::SyncParent(Transform& transform, VECTOR addAxis)
@@ -317,6 +331,31 @@ void Turret::SyncParent(Transform& transform, VECTOR addAxis)
 
 	// モデル制御の基本情報更新
 	transform.Update();
+
+}
+
+void Turret::SyncDestroyEffect(void)
+{
+
+	// 追従対象の位置
+	VECTOR followPos = transformBarrel_.pos;
+
+	// 追従対象の向き
+	Quaternion followRot = transformBarrel_.quaRot;
+
+	VECTOR rot = Quaternion::ToEuler(followRot);
+
+	// 追従対象から自機までの相対座標
+	VECTOR effectPos = followRot.PosAxis({ 0.0f,0.0f,0.0f });
+
+	// エフェクトの位置の更新
+	effectDestroyPos_ = VAdd(followPos, effectPos);
+
+	// 位置の設定
+	SetPosPlayingEffekseer3DEffect(effectDestroyPlayId_, effectDestroyPos_.x, effectDestroyPos_.y, effectDestroyPos_.z);
+	SetRotationPlayingEffekseer3DEffect(effectDestroyPlayId_, rot.x, rot.y, rot.z);
+
+	transformBarrel_.Update();
 
 }
 
@@ -382,6 +421,11 @@ const Transform& Turret::GetTransformBarrel(void) const
 void Turret::SetState(Turret::STATE state)
 {
 	ChangeState(state);
+}
+
+void Turret::SetHP(int hp)
+{
+	hp_ += hp;
 }
 
 void Turret::ChangeState(STATE state)

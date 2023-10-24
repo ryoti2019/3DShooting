@@ -27,7 +27,7 @@ public:
 	static constexpr float ROT_POW_GUN = 0.2f;
 
 	// 弾の発射間隔
-	static constexpr float TIME_DELAY_SHOT = 0.0f;
+	static constexpr float TIME_DELAY_SHOT = 0.3f;
 
 	// 衝突判定：球体半径
 	static constexpr float COLLISION_RADIUS = 200.0f;
@@ -62,7 +62,11 @@ public:
 	// 砲身のTransformの取得
 	const Transform& GetTransformBarrel(void) const;
 
+	// 状態の設定
 	void SetState(Turret::STATE state);
+
+	// HPの設定
+	void SetHP(int hp);
 
 private:
 
@@ -116,6 +120,12 @@ private:
 
 	VECTOR effectDestroyPos_;
 
+	// エフェクトの再生時間
+	float effectTime_;
+
+	// エフェクトのフラグ
+	bool isEffect_;
+
 	// 状態遷移
 	void ChangeState(STATE state);
 
@@ -126,6 +136,9 @@ private:
 
 	// 親(戦艦)との回転と位置の同期
 	void SyncParent(Transform& transform, VECTOR addAxis);
+
+	// 爆破エフェクト制御
+	void SyncDestroyEffect(void);
 
 	// 操作：弾発射
 	void ProcessShot(void);

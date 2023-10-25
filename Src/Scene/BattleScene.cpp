@@ -128,6 +128,12 @@ void BattleScene::Collision(void)
 	// 自機の球とボスの当たり判定
 	for (auto v : playerShip_->GetShots())
 	{
+		// 弾がSHOT状態じゃなかったら衝突判定しない
+		if (v->GetState() != ShotPlayer::STATE::SHOT)
+		{
+			// 爆発中や処理終了後は、以降の処理は実行しない
+			continue;
+		}
 		auto info = MV1CollCheck_Sphere(bossShip_->GetModelIdBossShip(), -1,
 			v->GetPos(), v->GetCollisionRadius());
 		if (info.HitNum >= 1)
@@ -155,14 +161,30 @@ void BattleScene::Collision(void)
 	// 自機の球とタレットの当たり判定
 	for (auto turret : bossShip_->GetTurrets())
 	{
+		// タレットがATTACK状態じゃなかったら衝突判定しない
+		if (turret->GetState() != Turret::STATE::ATTACK)
+		{
+			// 爆発中や処理終了後は、以降の処理は実行しない
+			continue;
+		}
 		for (auto v : playerShip_->GetShots())
 		{
+			// 弾がSHOT状態じゃなかったら衝突判定しない
+			if (v->GetState() != ShotPlayer::STATE::SHOT)
+			{
+				// 爆発中や処理終了後は、以降の処理は実行しない
+				continue;
+			}
 			auto info = AsoUtility::IsHitSpheres(v->GetPos(), v->GetCollisionRadius(),
 				turret->GetTransformBarrel().pos, turret->COLLISION_RADIUS);
 			if (info)
 			{
 				turret->SetHP(-1);
 				v->SetState(ShotPlayer::STATE::BLAST);
+				if (turret->GetHP() <= 0)
+				{
+					turret->Destroy();
+				}
 			}
 		}
 	}

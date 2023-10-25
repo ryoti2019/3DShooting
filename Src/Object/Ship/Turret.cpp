@@ -112,11 +112,6 @@ void Turret::Init(void)
 void Turret::Update(void)
 {
 
-	if (hp_ <= 0)
-	{
-		state_ = STATE::DESTROY;
-	}
-
 	switch (state_)
 	{
 	case Turret::STATE::NONE:
@@ -224,22 +219,6 @@ void Turret::UpdateAttack(void)
 void Turret::UpdateDestroy(void)
 {
 
-	if (effectTime_ <= 0.0f)
-	{
-		// エフェクト再生
-		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
-
-		// 大きさ
-		float SCALE = 10.0f;
-		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
-
-		// エフェクトの位置
-		SyncDestroyEffect();
-
-		effectTime_ = TIME_DESTROY;
-
-	}
-
 	if (effectTime_ > 0.0f)
 	{
 		effectTime_ -= SceneManager::GetInstance().GetDeltaTime();
@@ -253,6 +232,7 @@ void Turret::UpdateDestroy(void)
 	if (!isEffect_)
 	{
 		StopEffekseer3DEffect(effectDestroyPlayId_);
+		ChangeState(STATE::END);
 	}
 
 }
@@ -404,6 +384,12 @@ void Turret::CreateShot(void)
 
 }
 
+void Turret::Destroy(void)
+{
+	// 破壊状態へ移行
+	ChangeState(STATE::DESTROY);
+}
+
 void Turret::Release(void)
 {
 }
@@ -423,9 +409,19 @@ void Turret::SetState(Turret::STATE state)
 	ChangeState(state);
 }
 
+Turret::STATE Turret::GetState(void)
+{
+	return state_;
+}
+
 void Turret::SetHP(int hp)
 {
 	hp_ += hp;
+}
+
+int Turret::GetHP(void)
+{
+	return hp_;
 }
 
 void Turret::ChangeState(STATE state)
@@ -441,6 +437,14 @@ void Turret::ChangeState(STATE state)
 	case Turret::STATE::ATTACK:
 		break;
 	case Turret::STATE::DESTROY:
+		// エフェクト再生
+		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
+		// 大きさ
+		float SCALE = 100.0f;
+		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
+		// エフェクトの位置
+		SyncDestroyEffect();
+		effectTime_ = TIME_DESTROY;
 		break;
 	}
 

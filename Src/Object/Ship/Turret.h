@@ -65,8 +65,17 @@ public:
 	// ó‘Ô‚Ìİ’è
 	void SetState(Turret::STATE state);
 
+	// ó‘Ô‚Ìæ“¾
+	Turret::STATE GetState(void);
+
 	// HP‚Ìİ’è
 	void SetHP(int hp);
+
+	// HP‚Ìæ“¾
+	int GetHP(void);
+
+	// ©‹@”j‰óó‘Ô‚Ö‘JˆÚ
+	void Destroy(void);
 
 private:
 

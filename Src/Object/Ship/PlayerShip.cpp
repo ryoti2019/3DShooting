@@ -356,6 +356,17 @@ void PlayerShip::ChangeState(STATE state)
 	case PlayerShip::STATE::RUN:
 		break;
 	case PlayerShip::STATE::DESTROY:
+		// エフェクト再生
+		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
+
+		float SCALE = 10.0f;
+		// 大きさ
+		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
+
+		// エフェクトの位置
+		SyncDestroyEffect();
+
+		effectTime_ = 2.0f;
 		break;
 	}
 
@@ -389,21 +400,6 @@ void PlayerShip::UpdateRun(void)
 
 void PlayerShip::UpdateDestroy(void)
 {
-
-	if (effectTime_ <= 0.0f)
-	{
-		// エフェクト再生
-		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
-
-		float SCALE = 10.0f;
-		// 大きさ
-		SetScalePlayingEffekseer3DEffect(effectDestroyPlayId_, SCALE, SCALE, SCALE);
-
-		// エフェクトの位置
-		SyncDestroyEffect();
-
-		effectTime_ = 2.0f;
-	}
 
 	if (effectTime_ > 0.0f)
 	{

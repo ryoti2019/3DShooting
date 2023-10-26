@@ -49,6 +49,8 @@ Turret::Turret(const Transform& transformParent,
 
 	isEffect_ = false;
 
+	isAlive_ = true;
+
 }
 
 Turret::~Turret(void)
@@ -390,8 +392,20 @@ void Turret::Destroy(void)
 	ChangeState(STATE::DESTROY);
 }
 
+bool Turret::IsAlive(void)
+{	
+	return isAlive_;
+}
+
 void Turret::Release(void)
 {
+	for (auto& s : shots_)
+	{
+		s->Release();
+		delete s;
+	}
+	shots_.clear();
+
 }
 
 std::vector<ShotTurret*>& Turret::GetShots(void)
@@ -437,6 +451,7 @@ void Turret::ChangeState(STATE state)
 	case Turret::STATE::ATTACK:
 		break;
 	case Turret::STATE::DESTROY:
+	{
 		// エフェクト再生
 		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
 		// 大きさ
@@ -445,6 +460,10 @@ void Turret::ChangeState(STATE state)
 		// エフェクトの位置
 		SyncDestroyEffect();
 		effectTime_ = TIME_DESTROY;
+	}
+		break;
+	case Turret::STATE::END:
+		isAlive_ = false;
 		break;
 	}
 

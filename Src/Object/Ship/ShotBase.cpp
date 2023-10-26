@@ -123,6 +123,7 @@ void ShotBase::Draw(void)
 
 void ShotBase::Release(void)
 {
+	MV1DeleteModel(transform_.modelId);
 }
 
 VECTOR ShotBase::GetPos(void) const

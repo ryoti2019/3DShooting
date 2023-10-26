@@ -15,6 +15,13 @@ public:
 	// 旋回スピード
 	static constexpr float ROT_POW_DEG = 3.0f;
 
+	// フェード時間
+	static constexpr float TIME_FADE = 8.0f;
+
+	// フェード開始・終了色
+	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static constexpr COLOR_F FADE_C_TO = { 0.8f, 0.1f, 0.1f, 0.0f };
+
 	// 状態
 	enum class STATE
 	{
@@ -47,6 +54,12 @@ public:
 	// タレット
 	const std::vector<Turret*>& GetTurrets(void) const;
 
+	// 破壊判定
+	bool IsDestroy(void) const;
+
+	// 破壊演出終了判定
+	bool IsEnd(void) const;
+
 private:
 
 	// タレット
@@ -58,8 +71,11 @@ private:
 	// 状態
 	STATE state_;
 
-	// Y軸
-	Quaternion qua_;
+	// タレットの全滅フラグ
+	bool isAllDestroyedTurrets_;
+
+	// フェード時間
+	float stepFade_;
 
 	// 状態遷移
 	void ChangeState(STATE state);

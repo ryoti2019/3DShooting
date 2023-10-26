@@ -77,6 +77,8 @@ public:
 	// 自機破壊状態へ遷移
 	void Destroy(void);
 
+	bool IsAlive(void);
+
 private:
 
 	// 弾
@@ -134,6 +136,9 @@ private:
 
 	// エフェクトのフラグ
 	bool isEffect_;
+
+	// 生存判定
+	bool isAlive_;
 
 	// 状態遷移
 	void ChangeState(STATE state);

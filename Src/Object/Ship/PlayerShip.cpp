@@ -97,6 +97,7 @@ void PlayerShip::Update(void)
 	{
 		v->Update();
 	}
+
 }
 
 void PlayerShip::Draw(void)

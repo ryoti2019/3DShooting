@@ -55,6 +55,12 @@ void BossShip::Init(void)
 		break;
 	}
 
+	// タレットの全滅フラグ
+	isAllDestroyedTurrets_ = false;
+
+	// フェード時間
+	stepFade_ = TIME_FADE;
+
 	// 前方
 	MakeTurret(
 		{ 4.5f, 5.5f, 7.8f },
@@ -79,8 +85,6 @@ void BossShip::Init(void)
 	{ -3.5f, 5.0f, -17.8f },
 		{ 0.0f, AsoUtility::Deg2RadF(180.0f), AsoUtility::Deg2RadF(-18.0f) });
 
-	// シーンによって状態を切り替える
-
 }
 void BossShip::Update(void)
 {
@@ -88,7 +92,7 @@ void BossShip::Update(void)
 	VECTOR forward = transform_.GetForward();
 
 	// 移動
-	transform_.pos = VAdd(transform_.pos,VScale(forward,SPEED_MOVE));
+	transform_.pos = VAdd(transform_.pos, VScale(forward, SPEED_MOVE));
 
 	// モデル制御の基本情報更新
 	transform_.Update();
@@ -111,8 +115,23 @@ void BossShip::Update(void)
 		MV1RefreshCollInfo(transform_.modelId, -1);
 		// タレット
 		UpdateTurret();
+		if (isAllDestroyedTurrets_)
+		{
+			// タレットが全滅したら、ボスも破壊する
+			ChangeState(STATE::DESTROY);
+			return;
+		}
 		break;
 	case BossShip::STATE::DESTROY:
+		// タレット
+		UpdateTurret();
+		// 破壊時の機体フェード
+		stepFade_ -= SceneManager::GetInstance().GetDeltaTime();
+		if (stepFade_ < 0.0f)
+		{
+			ChangeState(STATE::END);
+			return;
+		}
 		break;
 	case BossShip::STATE::END:
 		break;
@@ -133,22 +152,37 @@ void BossShip::Draw(void)
 		DrawTurret();
 		break;
 	case BossShip::STATE::DESTROY:
+	{
+		// 時間による色の線形補間
+		float diff = TIME_FADE - stepFade_;
+		auto c = AsoUtility::Lerp(FADE_C_FROM, FADE_C_TO, (diff / TIME_FADE));
+		// モデルのマテリアルを取得
+		int num = MV1GetMaterialNum(transform_.modelId);
+		for (int i = 0; i < num; i++)
+		{
+			// モデルのディフューズカラーを変更
+			MV1SetMaterialDifColor(transform_.modelId, i, c);
+		}
+		// モデルの描画
+		MV1DrawModel(transform_.modelId);
 		break;
+	}
 	case BossShip::STATE::END:
 		break;
 	}
-
 }
 
 void BossShip::Release(void)
 {
 
-	for (auto t : turrets_)
+	for (auto& t : turrets_)
 	{
 		t->Release();
 		delete t;
 	}
 	turrets_.clear();
+
+
 
 }
 
@@ -170,6 +204,16 @@ int BossShip::GetModelIdBossShip(void)
 const std::vector<Turret*>& BossShip::GetTurrets(void) const
 {
 	return turrets_;
+}
+
+bool BossShip::IsDestroy(void) const
+{
+	return state_ == STATE::DESTROY;
+}
+
+bool BossShip::IsEnd(void) const
+{
+	return state_ == STATE::END;
 }
 
 void BossShip::ChangeState(STATE state)
@@ -206,9 +250,23 @@ void BossShip::Rotation(void)
 void BossShip::UpdateTurret(void)
 {
 
+	int alived = 0;
+
 	for (auto t : turrets_)
 	{
 		t->Update();
+
+		if (t->IsAlive())
+		{
+			alived++;
+		}
+
+	}
+
+	// タレットが１機も生存していなければ
+	if (alived == 0)
+	{
+		isAllDestroyedTurrets_ = true;
 	}
 
 }

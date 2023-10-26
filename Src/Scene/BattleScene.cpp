@@ -3,6 +3,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
+#include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Object/SpaceDome.h"
 #include "../Object/RockManager.h"
@@ -52,6 +53,13 @@ void BattleScene::Init(void)
 	// 自機の破壊演出時間
 	stepShipDestroy_ = 0.0f;
 
+	// ボスの破壊演出時間
+	stepBossDestroy_ = TIME_RESTART_BOSS_END;
+
+	// ゲームクリアロゴ
+	imgEndLogo_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::END_LOGO).handleId_;
+
 }
 
 void BattleScene::Update(void)
@@ -71,6 +79,29 @@ void BattleScene::Update(void)
 	// 衝突判定
 	Collision();
 
+	//// ボス破壊
+	//if (bossShip_->IsDestroy())
+	//{
+	//	// 余韻
+	//	stepBossDestroy_ -= SceneManager::GetInstance().GetDeltaTime();
+	//	if (stepBossDestroy_ < 0.0f)
+	//	{
+	//		// クリアしたらタイトル画面に戻る
+	//		SceneManager::GetInstance().ChangeScene(
+	//			SceneManager::SCENE_ID::TITLE);
+	//	}
+	//	return;
+	//}
+
+	// ボス破壊
+	if (bossShip_->IsEnd())
+	{
+		// クリアしたらタイトル画面に戻る
+		SceneManager::GetInstance().ChangeScene(
+		SceneManager::SCENE_ID::TITLE);
+		return;
+	}
+
 }
 
 void BattleScene::Draw(void)
@@ -81,6 +112,24 @@ void BattleScene::Draw(void)
 	rockManager_->Draw();
 	bossShip_->Draw();
 	playerShip_->Draw();
+
+	//// ボスが完全に停止
+	//if (bossShip_->IsDestroy())
+	//{
+	//	DrawRotaGraph(
+	//		Application::SCREEN_SIZE_X / 2,
+	//		Application::SCREEN_SIZE_Y / 2,
+	//		1.0f, 0.0f, imgEndLogo_, true);
+	//}
+
+	// ボスが完全に停止
+	if (bossShip_->IsDestroy() || bossShip_->IsEnd())
+	{
+		DrawRotaGraph(
+			Application::SCREEN_SIZE_X / 2,
+			Application::SCREEN_SIZE_Y / 2,
+			1.0f, 0.0f, imgEndLogo_, true);
+	}
 
 }
 

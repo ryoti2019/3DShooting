@@ -52,6 +52,7 @@ void SceneManager::Init(void)
 
 	// ‰ŠúƒV[ƒ“‚Ìİ’è
 	DoChangeScene(SCENE_ID::TITLE);
+	//DoChangeScene(SCENE_ID::BATTLE);
 
 }
 

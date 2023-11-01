@@ -98,6 +98,8 @@ void PlayerShip::Update(void)
 		v->Update();
 	}
 
+
+
 }
 
 void PlayerShip::Draw(void)
@@ -119,6 +121,21 @@ void PlayerShip::Draw(void)
 	{
 		v->Draw();
 	}
+
+
+	auto pos2D = ConvWorldPosToScreenPos(transform_.pos);
+	DrawRotaGraph(pos2D.x + 200,pos2D.y - 200, 1.0f,0.0f,
+		static_cast<int>(ResourceManager::GetInstance().Load(ResourceManager::SRC::SPEECH_BALLOON).handleId_),true,false);
+
+	// Pushメッセージ
+	std::string msg = "追って！";
+	SetFontSize(28);
+	int len = (int)strlen(msg.c_str());
+	int width = GetDrawStringWidth(msg.c_str(), len);
+	DrawFormatString(pos2D.x + width + 25, pos2D.y - 225, 0x000000, msg.c_str());
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	SetFontSize(16);
+
 }
 
 void PlayerShip::Destroy(void)

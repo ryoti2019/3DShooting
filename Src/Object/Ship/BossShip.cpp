@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Utility/AsoUtility.h"
@@ -54,6 +55,10 @@ void BossShip::Init(void)
 		ChangeState(STATE::BATTLE);
 		break;
 	}
+
+	// 破壊エフェクト
+	effectDestroyResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::PLAYER_SHIP_EXPLOSION).handleId_;
 
 	// タレットの全滅フラグ
 	isAllDestroyedTurrets_ = false;
@@ -132,6 +137,13 @@ void BossShip::Update(void)
 			ChangeState(STATE::END);
 			return;
 		}
+		// 破壊時のエフェクト
+		stepExplosion_ -= SceneManager::GetInstance().GetDeltaTime();
+		if (stepExplosion_ < 0.0f)
+		{
+			CreateRandomExplosion();
+			stepExplosion_ = TIME_EXPLOSION;
+		}
 		break;
 	case BossShip::STATE::END:
 		break;
@@ -182,7 +194,11 @@ void BossShip::Release(void)
 	}
 	turrets_.clear();
 
-
+	for (int playId : effectDestroyPlayIds_)
+	{
+		// 破壊エフェクト停止
+		StopEffekseer3DEffect(playId);
+	}
 
 }
 
@@ -214,6 +230,11 @@ bool BossShip::IsDestroy(void) const
 bool BossShip::IsEnd(void) const
 {
 	return state_ == STATE::END;
+}
+
+BossShip::STATE BossShip::GetState(void)
+{
+	return state_;
 }
 
 void BossShip::ChangeState(STATE state)
@@ -289,5 +310,66 @@ void BossShip::MakeTurret(VECTOR localPos, VECTOR localAddAxis)
 	// 初期化
 	turret->Init();
 	turrets_.push_back(turret);
+
+}
+
+void BossShip::CreateRandomExplosion(void)
+{
+
+	// 楕円周上にランダムな座標を作成する
+	for (int i = 0; i < 2; i++)
+	{
+
+		// XYZのランダムな角度
+		float x = static_cast<float>(GetRand(360));
+		float y = static_cast<float>(GetRand(360));
+		float z = static_cast<float>(GetRand(360));
+
+		// ラジアンに変換
+		x = AsoUtility::Deg2RadF(x);
+		y = AsoUtility::Deg2RadF(y);
+		z = AsoUtility::Deg2RadF(z);
+
+		// クォータニオンに変換
+		Quaternion randRot = Quaternion::Euler(x, y, z);
+
+		// 方向に変換
+		VECTOR dir = randRot.PosAxis({ 0.0f, 0.0f , 1.0f });
+
+		// 方向に対して、楕円のXYZの半径分距離を伸ばす
+		// ここで、半径をランダムにすると、楕円周上ではなく、楕円体状の座標になる
+		VECTOR pos = { 0.0f, 0.0f, 0.0f };
+			   pos = VAdd(pos, VScale({ dir.x, 0.0f, 0.0f }, COLLISION_ELLIPSOID_RADIUS_X));
+			   pos = VAdd(pos, VScale({ 0.0f, dir.y, 0.0f }, COLLISION_ELLIPSOID_RADIUS_Y));
+			   pos = VAdd(pos, VScale({ 0.0f, 0.0f, dir.z }, COLLISION_ELLIPSOID_RADIUS_Z));
+
+		// 生成された座標はボス戦艦からの相対座標になっているので、
+		// 回転させた上で、ワールド座標に直す
+		// 回転情報
+		Quaternion shipRot = transform_.quaRot;
+
+		// 相対座標を回転
+		VECTOR localRotPos = shipRot.PosAxis(pos);
+
+		// ワールド座標に変換(念のため、SCALE 1)
+		pos = VAdd(transform_.pos, VScale(localRotPos, 1.0f));
+
+		// 破壊エフェクト生成
+		int playId = PlayEffekseer3DEffect(effectDestroyResId_);
+
+		// 大きさ
+		SetScalePlayingEffekseer3DEffect(playId, 50.0f, 50.0f, 50.0f);
+
+		// 位置
+		SetPosPlayingEffekseer3DEffect(playId, pos.x, pos.y, pos.z);
+
+		// 角度
+		VECTOR angles = transform_.quaRot.ToEuler();
+		SetRotationPlayingEffekseer3DEffect(playId, angles.x, angles.y, angles.z);
+
+		// 動的配列に追加
+		effectDestroyPlayIds_.push_back(playId);
+
+	}
 
 }

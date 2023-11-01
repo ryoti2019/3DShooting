@@ -91,11 +91,11 @@ void GameScene::Draw(void)
 	// スペースデブリ
 	rockManager_->Draw();
 
-	// キャラクター系
-	playerShip_->Draw();
-
 	// ステージ
 	stage_->Draw();
+
+	// キャラクター系
+	playerShip_->Draw();
 
 }
 

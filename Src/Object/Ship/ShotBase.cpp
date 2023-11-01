@@ -12,9 +12,6 @@ ShotBase::ShotBase(void)
 	stepAlive_ = 0.0f;
 	dir_ = AsoUtility::VECTOR_ZERO;
 
-	// パラメータ設定
-	SetParam();
-
 	// モデル制御の基本情報
 	ResourceManager& rem = ResourceManager::GetInstance();
 	transform_.modelId =
@@ -40,6 +37,9 @@ ShotBase::~ShotBase(void)
 
 void ShotBase::Create(VECTOR birthPos, VECTOR dir)
 {
+
+	// パラメータ設定
+	SetParam();
 
 	// 再利用可能なようにする
 	// 指定方向に弾を飛ばす
@@ -149,20 +149,6 @@ float ShotBase::GetTimeAlive(void) const
 float ShotBase::GetCollisionRadius(void) const
 {
 	return collisionRadius_;
-}
-
-void ShotBase::SetParam(void)
-{
-
-	// 弾の速度
-	speed_ = 35.0f;
-
-	// 生存時間
-	timeAlive_ = 5.0f;
-
-	// 衝突用球体半径
-	collisionRadius_ = 10.0f;
-
 }
 
 void ShotBase::Move(void)

@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
@@ -32,6 +33,15 @@ void TitleScene::Init(void)
 	spaceDome_ = new SpaceDome(spaceDomeTrans_);
 	spaceDome_->Init();
 
+	// テキストの読み込み
+	for (int i = 0; i < NUM_TEXT; i++)
+	{
+		text_.handle.emplace_back(ResourceManager::GetInstance().Load(ResourceManager::SRC::ALPHABET).handleIds_[i]);
+	}
+
+	// テキストの座標
+	text_.pos = { -300.0f,0.0f,0.0f };
+
 }
 
 void TitleScene::Update(void)
@@ -44,6 +54,13 @@ void TitleScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
+
+	Quaternion qua = Quaternion::Euler(AsoUtility::Deg2RadF(-45.0f), AsoUtility::Deg2RadF(0.0f), AsoUtility::Deg2RadF(0.0f));
+
+	auto dir = qua.PosAxis({ 0.0f,0.0f,1.0f });
+
+	text_.pos = VAdd(text_.pos, VScale(dir, 1.0f));
+
 }
 
 void TitleScene::Draw(void)
@@ -54,6 +71,30 @@ void TitleScene::Draw(void)
 
 	// ロゴ描画
 	DrawLogo();
+
+	// テキストの描画
+	std::string msg = "Thank You";
+	int ascii;
+	size_t len = msg.size();
+	for (int i = 0; i < len; i++)
+	{
+		ascii = msg.at(i);
+		if (ascii >= 65 && ascii <= 90)
+		{
+			DrawBillboard3D({ text_.pos.x + (i % 10) * 64 ,text_.pos.y - (i / 10) * 64, text_.pos.z },
+				0.0f, 0.0f, 64, 0.0f, text_.handle[ascii - 65], true);
+		}
+		if (ascii >= 97 && ascii <= 122)
+		{
+			DrawBillboard3D({ text_.pos.x + (i % 10) * 64 ,text_.pos.y - (i / 10) * 64, text_.pos.z },
+				0.0f, 0.0f, 64, 0.0f, text_.handle[ascii - 71], true);
+		}
+		if (ascii == 32)
+		{
+			DrawBillboard3D({ text_.pos.x + (i % 10) * 64 ,text_.pos.y - (i / 10) * 64, text_.pos.z },
+				0.0f, 0.0f, 64, 0.0f, text_.handle[ascii - 71], true);
+		}
+	}
 
 }
 

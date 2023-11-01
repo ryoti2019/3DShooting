@@ -22,12 +22,12 @@ void ShotTurret::SetParam(void)
 {
 
 	// ’e‚Ì‘¬“x
-	speed_ = 1.0f;
+	speed_ = 20.0f;
 
 	// ¶‘¶ŠÔ
-	timeAlive_ = 3.0f;
+	timeAlive_ = 5.0f;
 
 	// Õ“Ë—p‹…‘Ì”¼Œa
-	collisionRadius_ = 1000.0f;
+	collisionRadius_ = 10.0f;
 
 }

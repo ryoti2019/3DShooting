@@ -138,7 +138,7 @@ void RockManager::Draw(void)
 	}
 	
 	// デバッグ用
-	DrawDebugMap();
+	//DrawDebugMap();
 
 }
 

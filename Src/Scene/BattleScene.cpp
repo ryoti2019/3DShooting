@@ -152,7 +152,7 @@ void BattleScene::Collision(void)
 
 	SceneManager& sceneIns = SceneManager::GetInstance();
 	// 自機とボスの当たり判定
-	if (playerShip_->IsDestroy())
+	if (playerShip_->IsDestroy() && bossShip_->GetState() != BossShip::STATE::DESTROY)
 	{
 		stepShipDestroy_ += sceneIns.GetDeltaTime();
 		if (stepShipDestroy_ > TIME_RESTART)
@@ -166,7 +166,7 @@ void BattleScene::Collision(void)
 		// ボスと自機との当たり判定
 		auto info = MV1CollCheck_Sphere(bossShip_->GetModelIdBossShip(), -1,
 			playerShip_->GetTransform().pos, PlayerShip::COLLISION_RADIUS);
-		if (info.HitNum >= 1)
+		if (info.HitNum >= 1 && bossShip_->GetState() != BossShip::STATE::DESTROY)
 		{
 			playerShip_->Destroy();
 		}

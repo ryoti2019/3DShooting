@@ -22,6 +22,14 @@ public:
 	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };
 	static constexpr COLOR_F FADE_C_TO = { 0.8f, 0.1f, 0.1f, 0.0f };
 
+	// 衝突判定：楕円体半径
+	static constexpr float COLLISION_ELLIPSOID_RADIUS_X = 800.0f;
+	static constexpr float COLLISION_ELLIPSOID_RADIUS_Y = 800.0f;
+	static constexpr float COLLISION_ELLIPSOID_RADIUS_Z = 2000.0f;
+
+	// 爆発間隔
+	static constexpr float TIME_EXPLOSION = 0.6f;
+
 	// 状態
 	enum class STATE
 	{
@@ -60,6 +68,9 @@ public:
 	// 破壊演出終了判定
 	bool IsEnd(void) const;
 
+	// 状態の取得
+	BossShip::STATE GetState(void);
+
 private:
 
 	// タレット
@@ -77,6 +88,15 @@ private:
 	// フェード時間
 	float stepFade_;
 
+	// 爆発間隔
+	float stepExplosion_;
+
+	// 破壊エフェクト
+	int effectDestroyResId_;
+
+	// 破壊エフェクトの再生ハンドルID
+	std::vector<int> effectDestroyPlayIds_;
+
 	// 状態遷移
 	void ChangeState(STATE state);
 
@@ -92,6 +112,10 @@ private:
 
 	// タレットの作成
 	void MakeTurret(VECTOR localPos, VECTOR localAddAxis);
+
+	// ボス破壊時の爆発エフェクト作成
+	void CreateRandomExplosion(void);
+
 };
 
 

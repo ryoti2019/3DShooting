@@ -10,7 +10,8 @@ class TitleScene : public SceneBase
 public:
 
 	// テキストの構造体
-	struct TEXT {
+	struct TEXT 
+	{
 		std::vector<int> handle;
 		VECTOR pos;
 	};

@@ -122,8 +122,9 @@ void Turret::Update(void)
 		UpdateAttack();
 		break;
 	case Turret::STATE::DESTROY:
-		isEffect_ = true;
 		UpdateDestroy();
+		break;
+	case Turret::STATE::END:
 		break;
 	}
 
@@ -251,6 +252,8 @@ void Turret::Draw(void)
 		break;
 	case Turret::STATE::DESTROY:
 		DrawDestroy();
+		break;
+	case Turret::STATE::END:
 		break;
 	}
 
@@ -452,6 +455,7 @@ void Turret::ChangeState(STATE state)
 		break;
 	case Turret::STATE::DESTROY:
 	{
+		isEffect_ = true;
 		// エフェクト再生
 		effectDestroyPlayId_ = PlayEffekseer3DEffect(effectDestroyResId_);
 		// 大きさ

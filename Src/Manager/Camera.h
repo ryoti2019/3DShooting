@@ -35,7 +35,7 @@ public:
 	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 25.0f, -80.0f };
 
 	// 追従対象からカメラ位置までの相対座標(ばね付き)
-	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, -10.0f };
+	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };
 
 	// カメラモード
 	enum class MODE

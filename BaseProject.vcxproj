@@ -25,6 +25,7 @@
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\Object\Ship\BossShip.cpp" />
     <ClCompile Include="Src\Object\RockManager.cpp" />
+    <ClCompile Include="Src\Object\Ship\NPC.cpp" />
     <ClCompile Include="Src\Object\Ship\PlayerShip.cpp" />
     <ClCompile Include="Src\Object\Common\Transform.cpp" />
     <ClCompile Include="Src\Application.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="Src\Manager\ResourceManager.h" />
     <ClInclude Include="Src\Manager\SceneManager.h" />
     <ClInclude Include="Src\Object\Grid.h" />
+    <ClInclude Include="Src\Object\Ship\NPC.h" />
     <ClInclude Include="Src\Object\Ship\PlayerShip.h" />
     <ClInclude Include="Src\Object\Rock.h" />
     <ClInclude Include="Src\Object\Ship\ShotBase.h" />

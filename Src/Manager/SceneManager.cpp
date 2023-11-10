@@ -72,7 +72,7 @@ void SceneManager::Init3D(void)
 	SetUseBackCulling(true);
 
 	// ライトの設定
-	SetUseLighting(true);
+	SetUseLighting(false);
 
 	// 正面から斜め下に向かったライト
 	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });

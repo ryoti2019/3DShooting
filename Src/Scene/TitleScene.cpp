@@ -1,5 +1,5 @@
-#include <string>
-#include <vector>
+//#include <string>
+//#include <vector>
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
@@ -73,7 +73,28 @@ void TitleScene::Draw(void)
 	DrawLogo();
 
 	// テキストの描画
-	std::string msg = "Thank You";
+	std::string msg =
+		"       STAFF       "
+		"      Ryo Terashi   "
+		"                     "
+		"       SYSTEM      "
+		"      Ryo Terashi   "
+		"                     "
+		"       GRAPHIC     "
+		"      Ryo Terashi   "
+		"                     "
+		"      TEST PLAY    "
+		"      Ryo Terashi   "
+		"                     "
+		"   SPECIAL THANKS  "
+		"      Ryo Terashi    "
+		"                     "
+		"    PRODICTION    "
+		"      Ryo Terashi    "
+		"                     ";
+
+
+
 	int ascii;
 	size_t len = msg.size();
 	for (int i = 0; i < len; i++)
@@ -81,18 +102,13 @@ void TitleScene::Draw(void)
 		ascii = msg.at(i);
 		if (ascii >= 65 && ascii <= 90)
 		{
-			DrawBillboard3D({ text_.pos.x + (i % 10) * 64 ,text_.pos.y - (i / 10) * 64, text_.pos.z },
-				0.0f, 0.0f, 64, 0.0f, text_.handle[ascii - 65], true);
+			DrawBillboard3D({ text_.pos.x + (i % 20) * 32 ,text_.pos.y - (i / 20) * 32, text_.pos.z },
+				0.0f, 0.0f, 32, 0.0f, text_.handle[ascii - 65], true);
 		}
 		if (ascii >= 97 && ascii <= 122)
 		{
-			DrawBillboard3D({ text_.pos.x + (i % 10) * 64 ,text_.pos.y - (i / 10) * 64, text_.pos.z },
-				0.0f, 0.0f, 64, 0.0f, text_.handle[ascii - 71], true);
-		}
-		if (ascii == 32)
-		{
-			DrawBillboard3D({ text_.pos.x + (i % 10) * 64 ,text_.pos.y - (i / 10) * 64, text_.pos.z },
-				0.0f, 0.0f, 64, 0.0f, text_.handle[ascii - 71], true);
+			DrawBillboard3D({ text_.pos.x + (i % 20) * 32 ,text_.pos.y - (i / 20) * 32, text_.pos.z },
+				0.0f, 0.0f, 32, 0.0f, text_.handle[ascii - 71], true);
 		}
 	}
 

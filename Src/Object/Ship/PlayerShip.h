@@ -9,7 +9,7 @@ class PlayerShip
 public:
 
 	// 移動スピード
-	static constexpr float SPEED_MOVE = 1.0f;
+	static constexpr float SPEED_MOVE = 10.0f;
 
 	// 自機の回転量
 	static constexpr float SPEED_ROT_DEG_Y = 1.0f;

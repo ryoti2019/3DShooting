@@ -10,7 +10,7 @@ class BossShip
 public:
 
 	// 移動スピード
-	static constexpr float SPEED_MOVE = 0.1f;
+	static constexpr float SPEED_MOVE = 4.0f;
 
 	// 旋回スピード
 	static constexpr float ROT_POW_DEG = 3.0f;

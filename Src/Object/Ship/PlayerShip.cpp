@@ -88,17 +88,15 @@ void PlayerShip::Update(void)
 		UpdateRun();
 		break;
 	case PlayerShip::STATE::DESTROY:
-		isEffect_ = true;
 		UpdateDestroy();
 		break;
 	}
 
+	// プレイヤーの弾の更新
 	for (auto v : shots_)
 	{
 		v->Update();
 	}
-
-
 
 }
 
@@ -117,24 +115,11 @@ void PlayerShip::Draw(void)
 		break;
 	}
 
+	// プレイヤーの弾の描画
 	for (auto v : shots_)
 	{
 		v->Draw();
 	}
-
-
-	auto pos2D = ConvWorldPosToScreenPos(transform_.pos);
-	DrawRotaGraph(pos2D.x + 200,pos2D.y - 200, 1.0f,0.0f,
-		static_cast<int>(ResourceManager::GetInstance().Load(ResourceManager::SRC::SPEECH_BALLOON).handleId_),true,false);
-
-	// Pushメッセージ
-	std::string msg = "追って！";
-	SetFontSize(28);
-	int len = (int)strlen(msg.c_str());
-	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(pos2D.x + width + 25, pos2D.y - 225, 0x000000, msg.c_str());
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetFontSize(16);
 
 }
 
@@ -385,6 +370,8 @@ void PlayerShip::ChangeState(STATE state)
 		SyncDestroyEffect();
 
 		effectTime_ = 2.0f;
+
+		isEffect_ = true;
 		break;
 	}
 
@@ -403,8 +390,7 @@ void PlayerShip::UpdateRun(void)
 	VECTOR forward = transform_.GetForward();
 
 	// 移動
-	transform_.pos =
-		VAdd(transform_.pos, VScale(forward, SPEED_MOVE + speedBoost_));
+	transform_.pos = VAdd(transform_.pos, VScale(forward, SPEED_MOVE + speedBoost_));
 
 	// モデル制御の基本情報更新
 	transform_.Update();
@@ -447,7 +433,7 @@ void PlayerShip::ProcessShot(void)
 		delayShot_ = 0.0f;
 	}
 
-	if (ins.IsTrgDown(KEY_INPUT_N) && delayShot_ == 0.0f)
+	if (ins.IsNew(KEY_INPUT_N) && delayShot_ == 0.0f)
 	{
 		CreateShot();
 		delayShot_ = TIME_DELAY_SHOT;

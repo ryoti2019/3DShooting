@@ -4,6 +4,7 @@
 class Grid;
 class SpaceDome;
 class PlayerShip;
+class NPC;
 class RockManager;
 class Stage;
 
@@ -40,6 +41,9 @@ private:
 	// プレイヤー
 	PlayerShip* playerShip_;
 
+	// NPC機
+	NPC* npc_;
+
 	// 背景のスペースデブリ
 	RockManager* rockManager_;
 
@@ -48,6 +52,12 @@ private:
 
 	// 自機破壊演出時間
 	float stepShipDestroy_;
+
+	// 赤の強度（初期値は最大）
+	int redIntensity_;
+
+	// 減らす数
+	int delta_;
 
 	// 衝突判定
 	void Collision(void);

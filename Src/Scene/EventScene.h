@@ -34,5 +34,13 @@ private:
 
 	// イベント用
 	ShotEvent* shotEvent_;
+
+	// 頂点情報の構造体
+	std::vector<VERTEX2D> vertexs_;
+
+	int breakScreen_;
+
+	bool isBreak_;
+
 };
 

@@ -22,7 +22,7 @@ void ShotTurret::SetParam(void)
 {
 
 	// ’e‚Ì‘¬“x
-	speed_ = 20.0f;
+	speed_ = 30.0f;
 
 	// ¶‘¶ŠÔ
 	timeAlive_ = 5.0f;

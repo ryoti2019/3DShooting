@@ -22,7 +22,7 @@ public:
 	static constexpr VECTOR AXIS_Z = { 0.0f, 0.0f, 1.0f };
 
 	// •ûŒü
-	static constexpr VECTOR DIR_F = { 0.0f, 0.0f, 3.0f };
+	static constexpr VECTOR DIR_F = { 0.0f, 0.0f, 1.0f };
 	static constexpr VECTOR DIR_B = { 0.0f, 0.0f, -1.0f };
 	static constexpr VECTOR DIR_R = { 1.0f, 0.0f, 0.0f };
 	static constexpr VECTOR DIR_L = { -1.0f, 0.0f, 0.0f };

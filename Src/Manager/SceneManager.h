@@ -8,6 +8,12 @@ class SceneManager
 {
 	
 public:
+
+	static constexpr float DEFAULT_FPS = 60.0f;
+
+	// 重力
+	static constexpr float GRAVITY = 9.81f;
+
 	// シーン管理用
 	enum class SCENE_ID
 	{

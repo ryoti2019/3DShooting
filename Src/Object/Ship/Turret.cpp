@@ -370,7 +370,10 @@ void Turret::CreateShot(void)
 		if (v->GetState() == ShotTurret::STATE::END)
 		{
 			// 以前に生成したインスタンスを使い回し
-			v->Create({ transformBarrel_.pos.x,transformBarrel_.pos.y + 150,transformBarrel_.pos.z, }, transformBarrel_.GetForward());
+			v->Create({ transformBarrel_.pos.x,
+				transformBarrel_.pos.y + 150,
+				transformBarrel_.pos.z, },
+				transformBarrel_.GetForward());
 			isCreate = true;
 			break;
 		}
@@ -381,7 +384,10 @@ void Turret::CreateShot(void)
 		auto dir = transformBarrel_.GetForward();
 		// 新しいインスタンスを生成
  		ShotTurret* newShot = new ShotTurret();
-		newShot->Create({ transformBarrel_.pos.x, transformBarrel_.pos.y + 150 ,transformBarrel_.pos.z }, transformBarrel_.GetForward());
+		newShot->Create({ transformBarrel_.pos.x,
+			transformBarrel_.pos.y + 150 ,
+			transformBarrel_.pos.z },
+			transformBarrel_.GetForward());
 
 		// 弾の管理配列に追加
 		shots_.push_back(newShot);
@@ -402,6 +408,7 @@ bool Turret::IsAlive(void)
 
 void Turret::Release(void)
 {
+
 	for (auto& s : shots_)
 	{
 		s->Release();
@@ -440,6 +447,7 @@ int Turret::GetHP(void)
 {
 	return hp_;
 }
+
 
 void Turret::ChangeState(STATE state)
 {

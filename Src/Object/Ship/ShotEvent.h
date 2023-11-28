@@ -1,6 +1,7 @@
 #pragma once
 #include "ShotBase.h"
 class Transform;
+class EventScene;
 
 class ShotEvent : public ShotBase
 {

@@ -1,5 +1,6 @@
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/Camera.h"
+#include "../../Scene/EventScene.h"
 #include "ShotEvent.h"
 
 ShotEvent::ShotEvent(void)

@@ -31,6 +31,7 @@ public:
 		JET,
 		BOOST,
 		PLAYER_SHIP_EXPLOSION,
+		TITLE
 	};
 
 	// 明示的にインステンスを生成する

@@ -1,7 +1,6 @@
 #pragma once
 #include <DxLib.h>
 #include "../../Object/Common/Transform.h"
-class SpriteAnimator;
 
 class ShotBase
 {
